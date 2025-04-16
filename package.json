@@ -1,0 +1,18 @@
+{
+  "name": "mystylist-mobile-app",
+  "version": "1.0.0",
+  "description": "Mobile Application Project developed with MERN stack",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hajruuudin/mystylist-mobile-app.git"
+  },
+  "author": "Hajrudin Imamovic",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hajruuudin/mystylist-mobile-app/issues"
+  },
+  "homepage": "https://github.com/hajruuudin/mystylist-mobile-app#readme"
+}
