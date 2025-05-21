@@ -13,6 +13,9 @@ import ItemOverviewScreen from 'screens/item/ItemOverviewScreen';
 import OutfitOverviewScreen from 'screens/outfit/OutfitOverviewScreen';
 import LoginScreen from 'screens/auth/LoginScreen';
 import RegisterScreen from 'screens/auth/RegisterScreen';
+import { useEffect, useState } from 'react';
+import { auth } from 'firebaseConfig';
+import { onAuthStateChanged, User } from 'firebase/auth';
 
 const ItemStack = createStackNavigator();
 const OutfitStack = createStackNavigator();
@@ -20,7 +23,7 @@ const OutfitStack = createStackNavigator();
 const MainTabs = createBottomTabNavigator()
 const AuthenticationStack = createStackNavigator()
 
-const isAuthenticated = true;
+
 
 function ItemStackNavigator() {
   return (
@@ -81,9 +84,19 @@ function MainTabNavigator() {
 }
 
 export default function App() {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setUser(user);
+    });
+
+    return unsubscribe;
+  }, []);
+
   return (
     <NavigationContainer>
-      { isAuthenticated ? <MainTabNavigator /> : <AuthenticationStackNavigator /> }
+      { user ? <MainTabNavigator /> : <AuthenticationStackNavigator /> }
     </NavigationContainer>
   );
 }
