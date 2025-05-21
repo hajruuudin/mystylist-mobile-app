@@ -25,6 +25,21 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+
+    "fonts" : [
+      {
+        "asset" : "./assets/fonts/KumbhSans-Bold.ttf",
+        "name" : "bold"
+      },
+      {
+        "asset" : "./assets/fonts/KumbhSans-Regular.ttf",
+        "name" : "regular"
+      },
+      {
+        "asset" : "./assets/fonts/KumbhSans-Light.ttf",
+        "name" : "light"
+      }
+    ],
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
