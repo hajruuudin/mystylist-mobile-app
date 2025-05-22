@@ -45,7 +45,6 @@ const ItemsScreen = () => {
     <SafeAreaView className='flex-1 bg-white'>
       <View className='p-4'>
         {/* Screen Title */}
-        <Text className='text-3xl font-bold mb-6 text-center text-gray-800'>Your Items</Text>
 
         {/* Header Section: Wardrobe Selector and Add New Item Button */}
         <View className='flex-row justify-between items-center mb-4'>

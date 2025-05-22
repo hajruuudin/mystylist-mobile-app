@@ -1,26 +1,12 @@
  import React from 'react';
 import { View, Text, Image, ScrollView, Dimensions, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { HomeStackParamList } from 'types/types';
+import { HomeStackParamList, Item } from 'types/types';
 import { RouteProp, useRoute } from '@react-navigation/native';
 
 // Get screen dimensions for responsive image height
 const { height: screenHeight } = Dimensions.get('window');
 
-// Define the Item interface for type safety
-interface Item {
-  id: string;
-  name: string;
-  category: string;
-  image?: string;
-  description?: string;
-  color?: string;
-  size?: string;
-  brand?: string;
-  material?: string;
-  purchaseDate?: string;
-  price?: number;
-}
 
 // Dummy data for a single item (replace with actual data fetched by ID later)
 const dummyItem: Item = {
@@ -39,7 +25,7 @@ const dummyItem: Item = {
 const FALLBACK_IMAGE = require('../../assets/404.png');
 type ItemOverviewRouteProp = RouteProp<HomeStackParamList, 'ItemOverview'>;
 
-const ItemOverviewScreen = () => { 
+const ItemOverviewScreen = ({}) => { 
   const item = dummyItem;
   const imageUrl = item.image ? { uri: item.image } : FALLBACK_IMAGE;
 

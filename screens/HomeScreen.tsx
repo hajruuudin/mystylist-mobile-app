@@ -5,8 +5,7 @@ const HomeScreen = () => {
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <ScrollView className='w-full p-4'>
-        <Text className='text-4xl font-extrabold mb-8 text-center'>HomeScreen</Text>
-
+        
         {/* My Wardrobe Section */}
         <Text className='text-2xl font-bold mb-2'>My Wardrobe</Text>
         <Text className='text-gray-600 mb-4'>Your recently added items to the wardrobe</Text>

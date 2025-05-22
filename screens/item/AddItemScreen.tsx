@@ -101,7 +101,6 @@ const AddItemScreen = () => {
       <ScrollView className='p-4'>
         <Text className='text-3xl font-bold mb-6 text-center text-gray-800'>Add New Item</Text>
 
-        {/* Image Input */}
         <View className='mb-6 items-center'>
           {imageUri ? (
             <Image
@@ -121,11 +120,9 @@ const AddItemScreen = () => {
             <Text className='text-white text-base font-bold'>Select Image</Text>
           </TouchableOpacity>
           <Text className='text-xs text-gray-500 mt-2 text-center'>
-            {/* (In a real app, this would open camera/gallery) */}
           </Text>
         </View>
 
-        {/* Item Name */}
         <Text className='text-lg font-semibold text-gray-700 mb-2'>Item Name</Text>
         <TextInput
           className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800'
@@ -134,27 +131,15 @@ const AddItemScreen = () => {
           onChangeText={setItemName}
         />
 
-        {/* Category (Placeholder for Picker) */}
         <Text className='text-lg font-semibold text-gray-700 mb-2'>Category</Text>
         <TouchableOpacity
           className='border border-gray-300 rounded-md px-4 py-3 mb-4 bg-gray-50'
-          onPress={() => console.log('Open category picker')} // Placeholder for opening a picker/modal
+          onPress={() => console.log('Open category picker')}
         >
           <Text className='text-gray-800'>{category || 'Select a category'}</Text>
         </TouchableOpacity>
-        {/* In a real app, you'd use a Picker component here, e.g., from @react-native-picker/picker */}
-        {/* For now, you can manually set a dummy category for testing purposes */}
-        {/* <Picker
-          selectedValue={category}
-          onValueChange={(itemValue) => setCategory(itemValue)}
-        >
-          {itemCategories.map((cat) => (
-            <Picker.Item key={cat.id} label={cat.name} value={cat.name} />
-          ))}
-        </Picker> */}
 
 
-        {/* Description */}
         <Text className='text-lg font-semibold text-gray-700 mb-2'>Description</Text>
         <TextInput
           className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800 h-24'
@@ -165,7 +150,6 @@ const AddItemScreen = () => {
           onChangeText={setDescription}
         />
 
-        {/* Color */}
         <Text className='text-lg font-semibold text-gray-700 mb-2'>Color</Text>
         <TextInput
           className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800'
@@ -174,7 +158,6 @@ const AddItemScreen = () => {
           onChangeText={setColor}
         />
 
-        {/* Size */}
         <Text className='text-lg font-semibold text-gray-700 mb-2'>Size</Text>
         <TextInput
           className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800'
@@ -183,7 +166,6 @@ const AddItemScreen = () => {
           onChangeText={setSize}
         />
 
-        {/* Brand */}
         <Text className='text-lg font-semibold text-gray-700 mb-2'>Brand</Text>
         <TextInput
           className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800'
@@ -192,7 +174,6 @@ const AddItemScreen = () => {
           onChangeText={setBrand}
         />
 
-        {/* Material */}
         <Text className='text-lg font-semibold text-gray-700 mb-2'>Material</Text>
         <TextInput
           className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800'
@@ -201,17 +182,15 @@ const AddItemScreen = () => {
           onChangeText={setMaterial}
         />
 
-        {/* Purchase Date */}
         <Text className='text-lg font-semibold text-gray-700 mb-2'>Purchase Date</Text>
         <TextInput
           className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800'
           placeholder='YYYY-MM-DD'
           value={purchaseDate}
           onChangeText={setPurchaseDate}
-          keyboardType='numeric' // Suggest numeric keyboard for date
+          keyboardType='numeric'
         />
 
-        {/* Price */}
         <Text className='text-lg font-semibold text-gray-700 mb-2'>Price</Text>
         <TextInput
           className='border border-gray-300 rounded-md px-4 py-3 mb-6 text-gray-800'
@@ -221,7 +200,6 @@ const AddItemScreen = () => {
           keyboardType='numeric'
         />
 
-        {/* Add Item Button */}
         <TouchableOpacity
           className='bg-green-600 px-6 py-4 rounded-xl shadow-md items-center'
           onPress={handleAddItem}
@@ -229,7 +207,7 @@ const AddItemScreen = () => {
           <Text className='text-white text-xl font-bold'>Add Item</Text>
         </TouchableOpacity>
 
-        <View className='h-10'></View> {/* Spacer at the bottom */}
+        <View className='h-10'></View>
       </ScrollView>
     </SafeAreaView>
   );
