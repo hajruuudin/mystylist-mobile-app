@@ -16,6 +16,8 @@ import RegisterScreen from 'screens/auth/RegisterScreen';
 import { useEffect, useState } from 'react';
 import { auth } from 'firebaseConfig';
 import { onAuthStateChanged, User } from 'firebase/auth';
+import AddItemScreen from 'screens/item/AddItemScreen';
+import AddOutfitScreen from 'screens/outfit/AddOutfitScreen';
 
 const ItemStack = createStackNavigator();
 const OutfitStack = createStackNavigator();
@@ -29,7 +31,8 @@ function ItemStackNavigator() {
   return (
     <ItemStack.Navigator>
       <ItemStack.Screen name='Items' component={ItemsScreen} options={{ headerTitle: "Your Items" }} />
-      <ItemStack.Screen name='ItemOverview' component={ItemOverviewScreen} options={{ headerTitle: "Item Overview" }} />
+      <ItemStack.Screen name='ItemOverview' component={ItemOverviewScreen} options={{ headerShown: false}} />
+      <ItemStack.Screen name='ItemAdd' component={AddItemScreen} options={{headerTitle: 'Add Item'}} />
     </ItemStack.Navigator>
   )
 }
@@ -38,7 +41,8 @@ function OutfitStackNavigator() {
   return(
     <OutfitStack.Navigator>
       <OutfitStack.Screen name="Outfits" component={OutfitsScreen} options={{ headerTitle: "Your Outfits" }} />
-      <OutfitStack.Screen name='OutfitOverview' component={OutfitOverviewScreen} options={{ headerTitle: "Outfit Overview" }} />
+      <OutfitStack.Screen name='OutfitOverview' component={OutfitOverviewScreen} options={{ headerShown: false }} />
+      <OutfitStack.Screen name='OutfitAdd' component={AddOutfitScreen} options={{headerTitle: 'Add Outfit'}} />
     </OutfitStack.Navigator>
   )
 }
@@ -61,9 +65,9 @@ function MainTabNavigator() {
 
             if (route.name === 'Home') {
               iconName = focused ? 'home' : 'home-outline';
-            } else if (route.name === 'Items') {
+            } else if (route.name === 'Item') {
               iconName = focused ? 'list-circle' : 'list-circle-outline';
-            } else if (route.name === 'Outfits') {
+            } else if (route.name === 'Outfit') {
               iconName = focused ? 'shirt' : 'shirt-outline';
             } else {
               iconName = focused ? 'person-circle' : 'person-circle-outline';
@@ -71,14 +75,14 @@ function MainTabNavigator() {
 
             return <Ionicons name={iconName} size={size} color={color} />;
           },
-          tabBarActiveTintColor: 'tomato',
+          tabBarActiveTintColor: '#0092b8',
           tabBarInactiveTintColor: 'gray',
         })}
         >
-        <MainTabs.Screen name="Home" component={HomeScreen} options={{ headerShown: false, tabBarLabel: 'Home' }} />
-        <MainTabs.Screen name="Items" component={ItemStackNavigator} options={{ headerShown: false, tabBarLabel: 'Items' }} />
-        <MainTabs.Screen name="Outfits" component={OutfitStackNavigator} options={{ headerShown: false, tabBarLabel: 'Outfits' }} />
-        <MainTabs.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false, tabBarLabel: 'Profile' }} />
+        <MainTabs.Screen name="Home" component={HomeScreen} options={{ headerShown: true, tabBarLabel: 'Home' }} />
+        <MainTabs.Screen name="Item" component={ItemStackNavigator} options={{ headerShown: false, tabBarLabel: 'Items' }} />
+        <MainTabs.Screen name="Outfit" component={OutfitStackNavigator} options={{ headerShown: false, tabBarLabel: 'Outfits' }} />
+        <MainTabs.Screen name="Profile" component={ProfileScreen} options={{ headerShown: true, tabBarLabel: 'Profile' }} />
       </MainTabs.Navigator>
   )
 }

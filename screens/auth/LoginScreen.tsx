@@ -51,8 +51,6 @@ const LoginScreen = () => {
           MyStylist
         </Text>
       </View>
-      
-      <Text style={{ fontFamily: 'KumbhSans_700Bold' }} className="text-2xl font-bold mb-6">Login</Text>
 
       <TextInput
         style={{ fontFamily: 'KumbhSans_400Regular' }}
