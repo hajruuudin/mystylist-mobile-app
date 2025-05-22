@@ -16,6 +16,7 @@ import RegisterScreen from 'screens/auth/RegisterScreen';
 import { useEffect, useState } from 'react';
 import { auth } from 'firebaseConfig';
 import { onAuthStateChanged, User } from 'firebase/auth';
+import AddItemScreen from 'screens/item/AddItemScreen';
 
 const ItemStack = createStackNavigator();
 const OutfitStack = createStackNavigator();
@@ -30,6 +31,7 @@ function ItemStackNavigator() {
     <ItemStack.Navigator>
       <ItemStack.Screen name='Items' component={ItemsScreen} options={{ headerTitle: "Your Items" }} />
       <ItemStack.Screen name='ItemOverview' component={ItemOverviewScreen} options={{ headerTitle: "Item Overview" }} />
+      <ItemStack.Screen name='ItemAdd' component={AddItemScreen} options={{headerTitle: 'Add Item'}} />
     </ItemStack.Navigator>
   )
 }
@@ -76,8 +78,8 @@ function MainTabNavigator() {
         })}
         >
         <MainTabs.Screen name="Home" component={HomeScreen} options={{ headerShown: false, tabBarLabel: 'Home' }} />
-        <MainTabs.Screen name="Items" component={ItemStackNavigator} options={{ headerShown: false, tabBarLabel: 'Items' }} />
-        <MainTabs.Screen name="Outfits" component={OutfitStackNavigator} options={{ headerShown: false, tabBarLabel: 'Outfits' }} />
+        <MainTabs.Screen name="Item" component={ItemStackNavigator} options={{ headerShown: false, tabBarLabel: 'Items' }} />
+        <MainTabs.Screen name="Outfit" component={OutfitStackNavigator} options={{ headerShown: false, tabBarLabel: 'Outfits' }} />
         <MainTabs.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false, tabBarLabel: 'Profile' }} />
       </MainTabs.Navigator>
   )

@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-// Import auth, firestore, and serverTimestamp from your new firebaseConfig
-import { auth, db } from '../../firebaseConfig'; // Adjust path as needed
-import { createUserWithEmailAndPassword } from 'firebase/auth'; // Specific function for creating user
-import { doc, serverTimestamp, setDoc } from 'firebase/firestore'; // Specific functions for Firestore
+import { auth, db } from '../../firebaseConfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { KumbhSans_400Regular, KumbhSans_700Bold, KumbhSans_900Black, useFonts } from '@expo-google-fonts/kumbh-sans';
 
-// Assuming AuthStackParamList and StackNavigationProp are still relevant for navigation types
 import { AuthStackParamList } from 'types/types';
 import { StackNavigationProp } from '@react-navigation/stack';
 
@@ -36,13 +35,22 @@ const RegisterScreen = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const { uid } = userCredential.user;
 
-      // Use doc and setDoc from firebase/firestore
+      // Create a user object inside the user firestore alogn with the authentication part
       await setDoc(doc(db, 'users', uid), {
-        firstName,
-        lastName,
-        username,
-        email,
-        createdAt: serverTimestamp(), // Use serverTimestamp from firebase/firestore
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
+        email: email,
+        createdAt: serverTimestamp(),
+      });
+
+      // Create an initial wardrobe for the user, potentially make it possible to have multiple wardrobes later:
+      await setDoc(doc(db, 'wardrobes', uid), {
+        userID: uid,
+        name: 'My Wardrobe',
+        items: [],
+        outfits: [],
+        createdAt: serverTimestamp(),
       });
 
       console.log('User registered:', uid);
@@ -53,26 +61,35 @@ const RegisterScreen = () => {
     }
   };
 
+  let [fontsLoaded] = useFonts({
+    KumbhSans_400Regular,
+    KumbhSans_700Bold,
+    KumbhSans_900Black
+  });
+
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-white px-4">
-      <Text className="text-2xl font-bold mb-6">Register</Text>
+      <Text style={{fontFamily: 'KumbhSans_900Black'}} className="text-4xl font-bold mb-6">Register</Text>
 
-      <View className="flex-row w-full space-x-4">
+      <View className="flex flex-row w-full space-x-2">
         <TextInput
+          style={{fontFamily: 'KumbhSans_400Regular'}}
           placeholder="First Name"
           value={firstName}
           onChangeText={setFirstName}
-          className="flex-1 border border-gray-300 rounded-xl px-4 py-3 mb-4 text-base"
+          className="w-1/2 border border-gray-300 rounded-xl px-4 py-3 mb-4 text-base"
         />
         <TextInput
+          style={{fontFamily: 'KumbhSans_400Regular'}}
           placeholder="Last Name"
           value={lastName}
           onChangeText={setLastName}
-          className="flex-1 border border-gray-300 rounded-xl px-4 py-3 mb-4 text-base"
+          className="w-1/2 border border-gray-300 rounded-xl px-4 py-3 mb-4 text-base"
         />
       </View>
 
       <TextInput
+        style={{fontFamily: 'KumbhSans_400Regular'}}
         placeholder="Username"
         value={username}
         onChangeText={setUsername}
@@ -81,6 +98,7 @@ const RegisterScreen = () => {
       />
 
       <TextInput
+        style={{fontFamily: 'KumbhSans_400Regular'}}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
@@ -90,6 +108,7 @@ const RegisterScreen = () => {
       />
 
       <TextInput
+        style={{fontFamily: 'KumbhSans_400Regular'}}
         placeholder="Password"
         value={password}
         onChangeText={setPassword}
@@ -98,6 +117,7 @@ const RegisterScreen = () => {
       />
 
       <TextInput
+        style={{fontFamily: 'KumbhSans_400Regular'}}
         placeholder="Repeat Password"
         value={repeatPassword}
         onChangeText={setRepeatPassword}
@@ -107,7 +127,7 @@ const RegisterScreen = () => {
 
       <TouchableOpacity
         onPress={handleRegister}
-        className="w-full bg-tomato py-3 rounded-full items-center mb-6"
+        className="w-full bg-cyan-700 py-3 rounded-xl items-center mb-6"
       >
         <Text className="text-white font-semibold text-base">Register</Text>
       </TouchableOpacity>
@@ -115,7 +135,7 @@ const RegisterScreen = () => {
       <Text className="text-base text-gray-700">
         Already have an account?{' '}
         <Text
-          className="text-tomato font-semibold"
+          className="text-cyan-600 font-semibold"
           onPress={() => navigation.navigate('Login')}
         >
           Log In!
