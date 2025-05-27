@@ -1,11 +1,11 @@
 import { View, Text, Image } from 'react-native'
 import React from 'react'
-import { OutfitShorthand } from 'types/types';
+import { Outfit, OutfitShorthand } from 'types/types';
 
 const FALLBACK_IMAGE = require('../assets/404.png')
 
 // OutfitCard component displays a single outfit with its image and name.
-const OutfitCard = ({ outfit }: { outfit: OutfitShorthand }) => {
+const OutfitCard = ({ outfit }: { outfit: Outfit }) => {
   // Placeholder image URL - replace with actual image logic later
   const imageUrl = outfit.image ? { uri: outfit.image } : FALLBACK_IMAGE;
 
@@ -20,9 +20,9 @@ const OutfitCard = ({ outfit }: { outfit: OutfitShorthand }) => {
         <Text className='text-base font-semibold text-gray-800 mb-1' numberOfLines={1}>
           {outfit.name}
         </Text>
-        {outfit.category && (
+        {outfit.occasion && (
           <Text className='text-sm text-gray-500' numberOfLines={1}>
-            {outfit.category}
+            {outfit.occasion}
           </Text>
         )}
       </View>

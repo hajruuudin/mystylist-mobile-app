@@ -46,9 +46,8 @@ export interface OutfitShorthand {
 }
 
 export interface Outfit {
-  id: string;
+  id?: string;
   name: string;
-  category: string;
   image?: string;
   description?: string;
   season?: string;
@@ -56,6 +55,7 @@ export interface Outfit {
   style?: string;
   items?: string[];
   createdAt?: string;
+  userId?: string;
 }
 
 export interface User {

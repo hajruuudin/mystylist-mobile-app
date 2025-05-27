@@ -1,47 +1,51 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, Dimensions, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { HomeStackParamList } from 'types/types';
+import { HomeStackParamList, Outfit } from 'types/types';
 import { RouteProp, useRoute } from '@react-navigation/native';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from 'firebaseConfig';
 
 const { height: screenHeight } = Dimensions.get('window');
+const FALLBACK_IMAGE = require('../../assets/404.png');
 
-export interface Outfit {
-  id: string;
-  name: string;
-  category: string;
-  image?: string;
-  description?: string;
-  season?: string;
-  occasion?: string;
-  style?: string;
-  items?: string[];
-  createdAt?: string;
-}
-
-const dummyOutfit: Outfit = {
-  id: 'o1',
-  name: 'Casual Weekend Look',
-  category: 'Casual',
-  image: 'https://placehold.co/600x400/C8A2C8/FFFFFF?text=Outfit+Detail',
-  description: 'A comfortable and stylish ensemble perfect for relaxed weekend activities.',
-  season: 'Spring/Summer',
-  occasion: 'Daytime, Weekend',
-  style: 'Relaxed Casual',
-  items: ['Blue Denim Jeans', 'White T-Shirt', 'Sneakers'],
-  createdAt: '2024-05-20',
-};
-
-const FALLBACK_OUTFIT_IMAGE = require('../../assets/404.png');
-
-type OutfitOverviewRouteProp = RouteProp<HomeStackParamList, 'OutfitOverview'>;
-
-const OutfitOverviewScreen = () => {
-  const route = useRoute<OutfitOverviewRouteProp>();
+const OutfitOverviewScreen = ({}) => {
+  const route = useRoute<RouteProp<HomeStackParamList, 'OutfitOverview'>>();
   const { outfitId } = route.params;
 
-  const outfit = dummyOutfit.id === outfitId ? dummyOutfit : null;
-  const imageUrl = outfit?.image ? { uri: outfit.image } : FALLBACK_OUTFIT_IMAGE;
+  const [outfit, setOutfit] = useState<Outfit>()
+
+   useEffect(() => {
+    async function fetchOutfit(){
+      try{
+        const collectionRef = collection(db, 'outfits')
+        const q = query(collectionRef, where('__name__', '==', outfitId))
+
+        const snapshot = await getDocs(q);
+        const outfitSnaphot : Outfit[] = snapshot.docs.map(doc => {
+          const data = doc.data()
+
+          return {
+            id: doc.id,
+            name: data.name,
+            description: data.description,
+            season: data.season,
+            occasion: data.occasion,
+            style: data.style,
+            items: data.items,
+            image: data.image || undefined,
+            userId: data.userId
+          }
+        })
+      
+        setOutfit(outfitSnaphot[0])
+      } catch (error){
+        console.error(error)
+      }
+    }
+
+    fetchOutfit()
+  }, [])
 
   if (!outfit) {
     return (
@@ -57,7 +61,7 @@ const OutfitOverviewScreen = () => {
 
       <View style={{ height: screenHeight * 0.5 }}>
         <Image
-          source={imageUrl}
+          source={outfit.image ? {uri: outfit.image} : FALLBACK_IMAGE}
           className="w-full h-full"
           resizeMode="cover"
         />
@@ -66,7 +70,6 @@ const OutfitOverviewScreen = () => {
       <SafeAreaView className="flex-1">
         <ScrollView className="p-4">
           <Text className="text-3xl font-bold text-gray-800 mb-2">{outfit.name}</Text>
-          <Text className="text-xl text-gray-600 mb-4">{outfit.category}</Text>
 
           <View className="mb-4">
             <Text className="text-lg font-semibold text-gray-700">Description:</Text>

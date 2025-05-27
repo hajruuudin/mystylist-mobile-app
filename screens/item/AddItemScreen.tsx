@@ -37,16 +37,13 @@ const AddItemScreen = () => {
       const snapshot = await getDocs(collection(db, "item-category"));
       const cats = snapshot.docs.map(doc => doc.data().name);
       setSelectCategories(cats)
-      console.log(cats)
     }
 
     fetchCategories()
-    console.log("Adding item to wardrobe:" + wardrobe + " for user: " + getAuth().currentUser?.email)
   }, [])
 
   // Function to handle adding an item (no backend logic yet)
   const handleAddItem = async () => {
-
     const newItem: Item = {
       name: itemName,
       category: category,

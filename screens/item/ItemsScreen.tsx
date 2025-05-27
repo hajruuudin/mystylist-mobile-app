@@ -110,7 +110,7 @@ const ItemsScreen = () => {
         {/* Vertical Scroll Container for Items */}
         <FlatList
           data={items}
-          renderItem={({ item }) =>  
+          renderItem={({ item: item }) =>  
             <TouchableOpacity
               className='w-1/2'
               onPress={() => navigation.navigate('ItemOverview', { itemId: item.id! })}
