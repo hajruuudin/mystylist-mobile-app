@@ -1,33 +1,54 @@
- import React from 'react';
+ import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, Dimensions, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { HomeStackParamList, Item } from 'types/types';
 import { RouteProp, useRoute } from '@react-navigation/native';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from 'firebaseConfig';
 
-// Get screen dimensions for responsive image height
 const { height: screenHeight } = Dimensions.get('window');
-
-
-// Dummy data for a single item (replace with actual data fetched by ID later)
-const dummyItem: Item = {
-  id: '1',
-  name: 'Blue Denim Jeans',
-  category: 'Bottoms',
-  description: 'Classic blue denim jeans, perfect for everyday wear. Features a straight fit and durable fabric.',
-  color: 'Blue',
-  size: 'M',
-  brand: 'DenimCo',
-  material: '100% Cotton',
-  purchaseDate: '2023-01-15',
-  price: 59.99,
-};
-
 const FALLBACK_IMAGE = require('../../assets/404.png');
-type ItemOverviewRouteProp = RouteProp<HomeStackParamList, 'ItemOverview'>;
 
 const ItemOverviewScreen = ({}) => { 
-  const item = dummyItem;
-  const imageUrl = item.image ? { uri: item.image } : FALLBACK_IMAGE;
+  const route = useRoute<RouteProp<HomeStackParamList, 'ItemOverview'>>();
+  const { itemId } = route.params;
+
+  const [item, setItem] = useState<Item>()
+
+  useEffect(() => {
+    async function fetchItem(){
+      try{
+        const collectionRef = collection(db, 'items')
+        const q = query(collectionRef, where('__name__', '==', itemId))
+
+        const snapshot = await getDocs(q);
+        const itemSnaphot : Item[] = snapshot.docs.map(doc => {
+          const data = doc.data()
+
+          return {
+            id: doc.id,
+            name: data.name,
+            category: data.category,
+            image: data.image,
+            description: data.description,
+            color: data.color,
+            size: data.size,
+            brand: data.brand,
+            material: data.material,
+            purchaseDate: data.purchaseDate,
+            price: data.price,
+            wardrobeId: data.wardrobeId,
+          }
+        })
+      
+        setItem(itemSnaphot[0])
+      } catch (error){
+        console.error(error)
+      }
+    }
+
+    fetchItem()
+  }, [])
 
   if (!item) {
     return (
@@ -39,11 +60,11 @@ const ItemOverviewScreen = ({}) => {
 
   return (
     <View className='flex-1 bg-white'>
-      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
+      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
 
       <View style={{ height: screenHeight * 0.5 }}>
         <Image
-          source={imageUrl}
+          source={item.image ? { uri: item.image } : FALLBACK_IMAGE}
           className='w-full h-full'
           resizeMode='cover'
         />

@@ -3,40 +3,22 @@ import { Alert } from 'react-native';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
-import { Item } from 'types/types';
-import { collection, getDocs } from 'firebase/firestore';
+import { HomeStackParamList, Item } from 'types/types';
+import { addDoc, collection, getDocs, Timestamp } from 'firebase/firestore';
 import { db } from 'firebaseConfig';
 import { ItemCategoryPicker } from 'components/ItemCategoryPicker';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { getAuth } from 'firebase/auth';
+import { StackNavigationProp } from '@react-navigation/stack';
 
-// Placeholder for item categories (consistent with ItemsScreen)
-const itemCategories = [
-  { id: 'tops', name: 'Tops', description: 'Shirts, blouses, tank tops, and other upper body garments.' },
-  { id: 'bottoms', name: 'Bottoms', description: 'Pants, jeans, skirts, shorts, and similar lower body wear.' },
-  { id: 'outerwear', name: 'Outerwear', description: 'Jackets, coats, parkas, and any layering items for warmth.' },
-  { id: 'footwear', name: 'Footwear', description: 'Shoes, boots, sandals, and other types of footwear.' },
-  { id: 'accessories', name: 'Accessories', description: 'Hats, scarves, belts, watches, and jewelry.' },
-  { id: 'dresses', name: 'Dresses', description: 'One-piece garments like dresses or jumpsuits.' },
-  { id: 'activewear', name: 'Activewear', description: 'Gym wear, workout clothes, leggings, and sports bras.' },
-  { id: 'undergarments', name: 'Undergarments', description: 'Underwear, bras, boxers, and other intimate apparel.' },
-  { id: 'sleepwear', name: 'Sleepwear', description: 'Pajamas, nightgowns, loungewear for sleeping.' },
-  { id: 'swimwear', name: 'Swimwear', description: 'Swimsuits, bikinis, trunks, and beachwear.' }
-];
 
 const AddItemScreen = () => {
+  const route = useRoute<RouteProp<HomeStackParamList, 'ItemAdd'>>();
+  const { wardrobeId } = route.params;
+  const navigation = useNavigation<StackNavigationProp<HomeStackParamList>>();
+
   const [selectCategories, setSelectCategories] = useState<string[]>([]);
   const [pickerVisible, setPickerVisible] = useState<boolean>(false);
-
-  useEffect(() => {
-    async function fetchCategories() {
-      const snapshot = await getDocs(collection(db, "item-category"));
-      const cats = snapshot.docs.map(doc => doc.data().name);
-      setSelectCategories(cats)
-      console.log(cats)
-    }
-
-    fetchCategories()
-  }, [])
-
 
   const [itemName, setItemName] = useState<string>('');
   const [category, setCategory] = useState<string>('');
@@ -48,11 +30,24 @@ const AddItemScreen = () => {
   const [purchaseDate, setPurchaseDate] = useState<string>('');
   const [price, setPrice] = useState<string>('');
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const [wardrobe, setWardrobe] = useState<string>(wardrobeId)
+
+  useEffect(() => {
+    async function fetchCategories() {
+      const snapshot = await getDocs(collection(db, "item-category"));
+      const cats = snapshot.docs.map(doc => doc.data().name);
+      setSelectCategories(cats)
+      console.log(cats)
+    }
+
+    fetchCategories()
+    console.log("Adding item to wardrobe:" + wardrobe + " for user: " + getAuth().currentUser?.email)
+  }, [])
 
   // Function to handle adding an item (no backend logic yet)
-  const handleAddItem = () => {
+  const handleAddItem = async () => {
+
     const newItem: Item = {
-      id: 'temp-id-' + Date.now(), // Placeholder ID
       name: itemName,
       category: category,
       description: description,
@@ -61,12 +56,23 @@ const AddItemScreen = () => {
       brand: brand,
       material: material,
       purchaseDate: purchaseDate,
-      price: parseFloat(price) || 0, // Convert price to number
+      price: parseFloat(price) || 0,
       image: imageUri || undefined,
+      wardrobeId: wardrobe
     };
     console.log('New Item Data:', newItem);
     // Here you would typically call a function to save to Firestore
     // For example: saveItemToFirestore(newItem);
+    try{
+      await addDoc(collection(db, 'items'), {
+        ...newItem,
+        createdAt: Timestamp.now()
+      })
+      Alert.alert('Success', 'Item added to your wardrobe!');
+      navigation.navigate('Item')
+    } catch (error){
+      console.error(error)
+    }
 
     // Optionally, clear the form after submission
     setItemName('');

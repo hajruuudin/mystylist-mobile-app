@@ -5,7 +5,7 @@ import { Item, ItemShorthand } from 'types/types'
 const FALLBACK_IMAGE = require('../assets/404.png')
 
 // ItemCard component displays a single item with its image, name, and category.
-const ItemCard = ({ item  } : {item: ItemShorthand}) => {
+const ItemCard = ({ item  } : {item: Item}) => {
   // Placeholder image URL - replace with actual image logic later
   const imageUrl = item.image ? { uri: item.image } : FALLBACK_IMAGE;
 

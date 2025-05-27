@@ -8,7 +8,7 @@ export type HomeStackParamList = {
   Home: undefined;
   Item: undefined;
   ItemOverview: {itemId: string}
-  ItemAdd: undefined;
+  ItemAdd: {wardrobeId: string};
   Outfit: undefined;
   OutfitOverview: {outfitId: string};
   OutfitAdd: undefined;
@@ -24,7 +24,7 @@ export interface ItemShorthand {
 }
 
 export interface Item {
-  id: string;
+  id?: string,
   name: string;
   category: string;
   image?: string;
@@ -35,6 +35,7 @@ export interface Item {
   material?: string;
   purchaseDate?: string;
   price?: number;
+  wardrobeId: string;
 }
 
 export interface OutfitShorthand {
@@ -62,4 +63,13 @@ export interface User {
   lastName: string;
   username: string;
   email: string;
+}
+
+export interface Wardrobe {
+  id: string;
+  userId: string;
+  name: string;
+  createdAt: string;
+  items: Item[];
+  outfits: Outfit[]
 }
