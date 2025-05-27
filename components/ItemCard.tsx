@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
-import { Item, ItemShorthand } from 'types/types';
+import { Item, ItemShorthand } from 'types/types'
 
 const FALLBACK_IMAGE = require('../assets/404.png')
 
