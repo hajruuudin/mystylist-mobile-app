@@ -1,45 +1,83 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ItemCard from '../../components/ItemCard'; // Import the new ItemCard component
-import { HomeStackParamList } from 'types/types';
-import { useNavigation } from '@react-navigation/native';
+import { HomeStackParamList, Item, Wardrobe } from 'types/types';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from 'node_modules/@react-navigation/stack/lib/typescript/src/types';
-
-// Placeholder for item categories (as provided in your request)
-const itemCategories = [
-  { id: 'tops', name: 'Tops', description: 'Shirts, blouses, tank tops, and other upper body garments.' },
-  { id: 'bottoms', name: 'Bottoms', description: 'Pants, jeans, skirts, shorts, and similar lower body wear.' },
-  { id: 'outerwear', name: 'Outerwear', description: 'Jackets, coats, parkas, and any layering items for warmth.' },
-  { id: 'footwear', name: 'Footwear', description: 'Shoes, boots, sandals, and other types of footwear.' },
-  { id: 'accessories', name: 'Accessories', description: 'Hats, scarves, belts, watches, and jewelry.' },
-  { id: 'dresses', name: 'Dresses', description: 'One-piece garments like dresses or jumpsuits.' },
-  { id: 'activewear', name: 'Activewear', description: 'Gym wear, workout clothes, leggings, and sports bras.' },
-  { id: 'undergarments', name: 'Undergarments', description: 'Underwear, bras, boxers, and other intimate apparel.' },
-  { id: 'sleepwear', name: 'Sleepwear', description: 'Pajamas, nightgowns, loungewear for sleeping.' },
-  { id: 'swimwear', name: 'Swimwear', description: 'Swimsuits, bikinis, trunks, and beachwear.' }
-];
-
-// Dummy data for items to display (replace with actual data from Firestore later)
-const dummyItems = [
-  { id: '1', name: 'Blue Denim Jeans', category: itemCategories[1].name},
-  { id: '2', name: 'White T-Shirt', category: itemCategories[0].name},
-  { id: '3', name: 'Leather Jacket', category: itemCategories[2].name},
-  { id: '4', name: 'Running Shoes', category: itemCategories[3].name},
-  { id: '5', name: 'Red Scarf', category: itemCategories[4].name},
-  { id: '6', name: 'Summer Dress', category: itemCategories[5].name},
-  { id: '7', name: 'Workout Leggings', category: itemCategories[6].name},
-  { id: '8', name: 'Black Socks', category: itemCategories[7].name},
-];
-
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from 'firebaseConfig';
+import { getAuth } from 'firebase/auth';
 
 const ItemsScreen = () => {
-  // State for selected wardrobe (placeholder for now)
-  const [selectedWardrobe, setSelectedWardrobe] = useState('My Wardrobe');
+  const [wardrobes, setWardrobes] = useState<Wardrobe[]>([]);
+  const [items, setItems] = useState<Item[]>([]);
+  const [selectedWardrobe, setSelectedWardrobe] = useState<Wardrobe>();
   const navigation = useNavigation<StackNavigationProp<HomeStackParamList>>();
 
-  // Dummy wardrobe options (replace with actual data from Firestore later)
-  const wardrobeOptions = ['My Wardrobe', 'Summer Wardrobe', 'Winter Wardrobe'];
+  // 1. Fetch wardrobes only once
+  useFocusEffect(
+    useCallback(() => {
+      const fetchUserWardrobes = async () => {
+        const wardrobeRef = collection(db, 'wardrobes');
+        const q = query(wardrobeRef, where('userID', '==', getAuth().currentUser?.uid));
+        const snapshot = await getDocs(q);
+        const wardrobes: Wardrobe[] = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            userId: data.userId,
+            name: data.name,
+            createdAt: data.createdAt?.toDate().toISOString() || '', 
+            items: data.items || [],
+            outfits: data.outfits || [],
+          };
+        });
+
+        setWardrobes(wardrobes);
+        if (wardrobes.length > 0) {
+          setSelectedWardrobe(wardrobes[0]);
+        }
+      };
+
+      fetchUserWardrobes();
+
+      // no cleanup needed
+    }, [])
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchItemsForWardrobe = async () => {
+        if (!selectedWardrobe) return;
+        const itemsRef = collection(db, 'items');
+        const q = query(itemsRef, where('wardrobeId', '==', selectedWardrobe.id));
+        const snapshot = await getDocs(q);
+        const snapshotItems: Item[] = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            name: data.name,
+            category: data.category,
+            image: data.image,
+            description: data.description,
+            color: data.color,
+            size: data.size,
+            brand: data.brand,
+            material: data.material,
+            purchaseDate: data.purchaseDate,
+            price: data.price,
+            wardrobeId: data.wardrobeId,
+          };
+        });
+
+        setItems(snapshotItems);
+      };
+
+      fetchItemsForWardrobe();
+    }, [selectedWardrobe])
+  );
+
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
@@ -52,7 +90,7 @@ const ItemsScreen = () => {
           <View className='flex-row items-center'>
             {/* This would typically be a Picker/Dropdown component */}
             <TouchableOpacity className='border border-gray-300 rounded-md px-6 py-2 bg-gray-50'>
-              <Text className='text-gray-800'>{selectedWardrobe}</Text>
+              <Text className='text-gray-800'>{selectedWardrobe?.name}</Text>
             </TouchableOpacity>
             {/* You would implement a modal or a proper picker here to change selectedWardrobe */}
           </View>
@@ -60,7 +98,7 @@ const ItemsScreen = () => {
           {/* Add New Item Button */}
           <TouchableOpacity
             className='bg-cyan-500 px-6 py-2 rounded-xl'
-            onPress={() => navigation.navigate('ItemAdd')} // Placeholder for navigation
+            onPress={() => navigation.navigate('ItemAdd', {wardrobeId: selectedWardrobe!.id})} // Placeholder for navigation
           >
             <Text className='text-white text-base font-bold'>Add new Item</Text>
           </TouchableOpacity>
@@ -71,16 +109,16 @@ const ItemsScreen = () => {
 
         {/* Vertical Scroll Container for Items */}
         <FlatList
-          data={dummyItems}
-          renderItem={({ item }) =>  
+          data={items}
+          renderItem={({ item: item }) =>  
             <TouchableOpacity
               className='w-1/2'
-              onPress={() => navigation.navigate('ItemOverview', { itemId: item.id })}
+              onPress={() => navigation.navigate('ItemOverview', { itemId: item.id! })}
             >
               <ItemCard item={item} />
             </TouchableOpacity>
             }
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id!}
           numColumns={2} // Display two items per row
           contentContainerStyle={{ paddingBottom: 20 }} // Add some padding at the bottom
           columnWrapperStyle={{ justifyContent: 'space-between' }} // Distribute items evenly

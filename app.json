@@ -1,12 +1,11 @@
 {
   "expo": {
-    "name": "my-expo-app",
-    "slug": "my-expo-app",
+    "name": "mystylist-mobile-app",
+    "slug": "mystylist-mobile-app",
     "version": "1.0.0",
 
     "web": {
-      "favicon": "./assets/favicon.png",
-      "bundler": "metro"
+      "favicon": "./assets/favicon.png"
     },
 
     "experiments": {
@@ -25,21 +24,6 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-
-    "fonts" : [
-      {
-        "asset" : "./assets/fonts/KumbhSans-Bold.ttf",
-        "name" : "bold"
-      },
-      {
-        "asset" : "./assets/fonts/KumbhSans-Regular.ttf",
-        "name" : "regular"
-      },
-      {
-        "asset" : "./assets/fonts/KumbhSans-Light.ttf",
-        "name" : "light"
-      }
-    ],
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
