@@ -18,9 +18,13 @@ import { auth } from 'firebaseConfig';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import AddItemScreen from 'screens/item/AddItemScreen';
 import AddOutfitScreen from 'screens/outfit/AddOutfitScreen';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import WishlistScreen from 'screens/wishlist/WishlistScreen';
+import AddWishlistItemScreen from 'screens/wishlist/AddWishlistItemScreen';
 
 const ItemStack = createStackNavigator();
 const OutfitStack = createStackNavigator();
+const WishlistStack = createStackNavigator();
 
 const MainTabs = createBottomTabNavigator()
 const AuthenticationStack = createStackNavigator()
@@ -30,7 +34,7 @@ const AuthenticationStack = createStackNavigator()
 function ItemStackNavigator() {
   return (
     <ItemStack.Navigator>
-      <ItemStack.Screen name='Items' component={ItemsScreen} options={{ headerTitle: "Your Items" }} />
+      <ItemStack.Screen name='Items' component={ItemsScreen} options={{ headerTitle: "Items" }} />
       <ItemStack.Screen name='ItemOverview' component={ItemOverviewScreen} options={{ headerShown: false}} />
       <ItemStack.Screen name='ItemAdd' component={AddItemScreen} options={{headerTitle: 'Add Item'}} />
     </ItemStack.Navigator>
@@ -40,10 +44,19 @@ function ItemStackNavigator() {
 function OutfitStackNavigator() {
   return(
     <OutfitStack.Navigator>
-      <OutfitStack.Screen name="Outfits" component={OutfitsScreen} options={{ headerTitle: "Your Outfits" }} />
+      <OutfitStack.Screen name="Outfits" component={OutfitsScreen} options={{ headerTitle: "Outfits" }} />
       <OutfitStack.Screen name='OutfitOverview' component={OutfitOverviewScreen} options={{ headerShown: false }} />
       <OutfitStack.Screen name='OutfitAdd' component={AddOutfitScreen} options={{headerTitle: 'Add Outfit'}} />
     </OutfitStack.Navigator>
+  )
+}
+
+function WishlistStackNavigator() {
+  return(
+    <WishlistStack.Navigator>
+      <WishlistStack.Screen name="Wishlists" component={WishlistScreen} options={{ headerTitle: "Wishlist"}} />
+      <WishlistStack.Screen name="WishlistAdd" component={AddWishlistItemScreen} options={{ headerTitle: "Add to wishlist"}} />
+    </WishlistStack.Navigator>
   )
 }
 
@@ -69,6 +82,8 @@ function MainTabNavigator() {
               iconName = focused ? 'list-circle' : 'list-circle-outline';
             } else if (route.name === 'Outfit') {
               iconName = focused ? 'shirt' : 'shirt-outline';
+            } else if (route.name === 'Wishlist') {
+              iconName = focused ? 'albums' : 'albums-outline';
             } else {
               iconName = focused ? 'person-circle' : 'person-circle-outline';
             }
@@ -82,6 +97,7 @@ function MainTabNavigator() {
         <MainTabs.Screen name="Home" component={HomeScreen} options={{ headerShown: true, tabBarLabel: 'Home' }} />
         <MainTabs.Screen name="Item" component={ItemStackNavigator} options={{ headerShown: false, tabBarLabel: 'Items' }} />
         <MainTabs.Screen name="Outfit" component={OutfitStackNavigator} options={{ headerShown: false, tabBarLabel: 'Outfits' }} />
+        <MainTabs.Screen name="Wishlist" component={WishlistStackNavigator} options={{headerShown: false, tabBarLabel: 'Wishlist'}} />
         <MainTabs.Screen name="Profile" component={ProfileScreen} options={{ headerShown: true, tabBarLabel: 'Profile' }} />
       </MainTabs.Navigator>
   )
@@ -99,8 +115,10 @@ export default function App() {
   }, []);
 
   return (
-    <NavigationContainer>
-      { user ? <MainTabNavigator /> : <AuthenticationStackNavigator /> }
-    </NavigationContainer>
+    <GestureHandlerRootView>
+      <NavigationContainer>
+        { user ? <MainTabNavigator /> : <AuthenticationStackNavigator /> }
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }

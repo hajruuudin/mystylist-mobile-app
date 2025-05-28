@@ -5,6 +5,7 @@ import { HomeStackParamList, Item } from 'types/types';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from 'firebaseConfig';
+import { getAuth } from 'firebase/auth';
 
 const { height: screenHeight } = Dimensions.get('window');
 const FALLBACK_IMAGE = require('../../assets/404.png');
@@ -38,6 +39,7 @@ const ItemOverviewScreen = ({}) => {
             purchaseDate: data.purchaseDate,
             price: data.price,
             wardrobeId: data.wardrobeId,
+            userId: getAuth().currentUser?.uid
           }
         })
       
@@ -62,7 +64,7 @@ const ItemOverviewScreen = ({}) => {
     <View className='flex-1 bg-white'>
       <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
 
-      <View style={{ height: screenHeight * 0.5 }}>
+      <View style={{ height: screenHeight * 0.4 }}>
         <Image
           source={item.image ? { uri: item.image } : FALLBACK_IMAGE}
           className='w-full h-full'

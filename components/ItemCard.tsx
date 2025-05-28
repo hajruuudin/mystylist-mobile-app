@@ -4,13 +4,20 @@ import { Item, ItemShorthand } from 'types/types'
 
 const FALLBACK_IMAGE = require('../assets/404.png')
 
+interface ItemCardProps {
+  item: Item;
+  variant?: 'home' | 'default'; // Add more variants as needed
+}
+
 // ItemCard component displays a single item with its image, name, and category.
-const ItemCard = ({ item  } : {item: Item}) => {
+const ItemCard = ({ item, variant = 'default'  } : ItemCardProps) => {
   // Placeholder image URL - replace with actual image logic later
   const imageUrl = item.image ? { uri: item.image } : FALLBACK_IMAGE;
 
+  const widthVariant = variant == 'default' ? 'flex-1 m-2 bg-gray-100 rounded-lg shadow-md overflow-hidden' : 'flex-1 m-2 bg-gray-100 rounded-lg shadow-md overflow-hidden min-w-40'
+
   return (
-    <View className='flex-1 m-2 bg-white rounded-lg shadow-md overflow-hidden'>
+    <View className={widthVariant}>
       {/* Item Image */}
       <Image
         source={imageUrl}

@@ -12,6 +12,8 @@ export type HomeStackParamList = {
   Outfit: undefined;
   OutfitOverview: {outfitId: string};
   OutfitAdd: undefined;
+  Wishlists: undefined;
+  WishlistAdd: undefined;
   Profile: undefined;
   Login: undefined;
 }
@@ -35,7 +37,9 @@ export interface Item {
   material?: string;
   purchaseDate?: string;
   price?: number;
-  wardrobeId: string;
+  wardrobeId?: string;
+  userId?: string;
+  createdAt?: Date
 }
 
 export interface OutfitShorthand {
@@ -54,7 +58,7 @@ export interface Outfit {
   occasion?: string;
   style?: string;
   items?: string[];
-  createdAt?: string;
+  createdAt?: Date
   userId?: string;
 }
 
@@ -72,4 +76,14 @@ export interface Wardrobe {
   createdAt: string;
   items: Item[];
   outfits: Outfit[]
+}
+
+export interface WishlistItem {
+  id?: string;
+  userId?: string;
+  itemTitle?: string;
+  itemCategory?: string;
+  itemDescription?: string;
+  itemPlacesToBuy?: string;
+  createdAt?: Date;
 }
