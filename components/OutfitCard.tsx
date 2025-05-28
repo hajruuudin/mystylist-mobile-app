@@ -4,13 +4,20 @@ import { Outfit, OutfitShorthand } from 'types/types';
 
 const FALLBACK_IMAGE = require('../assets/404.png')
 
+interface OutfitCardProps {
+  outfit: Outfit;
+  variant?: 'home' | 'default';
+}
+
 // OutfitCard component displays a single outfit with its image and name.
-const OutfitCard = ({ outfit }: { outfit: Outfit }) => {
+const OutfitCard = ({ outfit, variant = 'default' }: OutfitCardProps) => {
   // Placeholder image URL - replace with actual image logic later
   const imageUrl = outfit.image ? { uri: outfit.image } : FALLBACK_IMAGE;
 
+  const widthVariant = variant == 'default' ? 'flex-1 m-2 bg-gray-100 rounded-lg shadow-md overflow-hidden' : 'flex-1 m-2 bg-gray-100 rounded-lg shadow-md overflow-hidden min-w-40'
+
   return (
-    <View className='flex-1 m-2 bg-white rounded-lg shadow-md overflow-hidden'>
+    <View className={widthVariant}>
       <Image
         source={imageUrl}
         className='w-full h-32 object-cover rounded-t-lg'

@@ -50,7 +50,7 @@ const OutfitsScreen = () => {
       <View className='p-4'>
         {/* <Text className='text-3xl font-bold mb-6 text-center text-gray-800'>Your Outfits</Text> */}
 
-        <View className='flex-row justify-between items-center mb-4'>
+        <View className='w-full flex-row justify-center items-center mb-4'>
           <TouchableOpacity
             className='bg-cyan-500 px-6 py-2 rounded-xl'
             onPress={() => navigation.navigate('OutfitAdd')}

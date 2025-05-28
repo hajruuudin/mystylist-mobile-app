@@ -4,7 +4,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, Image } from 'reac
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { HomeStackParamList, Item } from 'types/types';
-import { addDoc, collection, getDocs, Timestamp } from 'firebase/firestore';
+import { addDoc, collection, getDocs, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { db } from 'firebaseConfig';
 import { ItemCategoryPicker } from 'components/ItemCategoryPicker';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
@@ -55,7 +55,8 @@ const AddItemScreen = () => {
       purchaseDate: purchaseDate,
       price: parseFloat(price) || 0,
       image: imageUri || undefined,
-      wardrobeId: wardrobe
+      wardrobeId: wardrobe,
+      userId: getAuth().currentUser?.uid,
     };
     console.log('New Item Data:', newItem);
     // Here you would typically call a function to save to Firestore

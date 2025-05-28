@@ -68,6 +68,7 @@ const ItemsScreen = () => {
             purchaseDate: data.purchaseDate,
             price: data.price,
             wardrobeId: data.wardrobeId,
+            userId: data.userId
           };
         });
 
