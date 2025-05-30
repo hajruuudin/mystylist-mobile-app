@@ -46,7 +46,7 @@ const OutfitsScreen = () => {
   
 
   return (
-    <SafeAreaView className='flex-1 bg-white'>
+    <SafeAreaView className='flex-1 bg-gray-100'>
       <View className='p-4'>
         {/* <Text className='text-3xl font-bold mb-6 text-center text-gray-800'>Your Outfits</Text> */}
 

@@ -14,7 +14,7 @@ const ItemCard = ({ item, variant = 'default'  } : ItemCardProps) => {
   // Placeholder image URL - replace with actual image logic later
   const imageUrl = item.image ? { uri: item.image } : FALLBACK_IMAGE;
 
-  const widthVariant = variant == 'default' ? 'flex-1 m-2 bg-gray-100 rounded-lg shadow-md overflow-hidden' : 'flex-1 m-2 bg-gray-100 rounded-lg shadow-md overflow-hidden min-w-40'
+  const widthVariant = variant == 'default' ? 'flex-1 m-2 bg-white rounded-lg shadow-md overflow-hidden' : 'flex-1 m-2 bg-white rounded-lg shadow-md overflow-hidden min-w-40'
 
   return (
     <View className={widthVariant}>

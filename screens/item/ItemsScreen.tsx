@@ -81,7 +81,7 @@ const ItemsScreen = () => {
 
 
   return (
-    <SafeAreaView className='flex-1 bg-white'>
+    <SafeAreaView className='flex-1 bg-gray-100'>
       <View className='p-4'>
         {/* Screen Title */}
 
