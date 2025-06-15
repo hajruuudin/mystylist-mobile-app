@@ -1,16 +1,16 @@
+import * as FileSystem from 'expo-file-system';
 import React, { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
-import { HomeStackParamList, Item } from 'types/types';
+import { HomeStackParamList, ImageFile, Item } from 'types/types';
 import { addDoc, collection, getDocs, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { db } from 'firebaseConfig';
 import { ItemCategoryPicker } from 'components/ItemCategoryPicker';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { getAuth } from 'firebase/auth';
 import { StackNavigationProp } from '@react-navigation/stack';
-
 
 const AddItemScreen = () => {
   const route = useRoute<RouteProp<HomeStackParamList, 'ItemAdd'>>();
@@ -29,7 +29,8 @@ const AddItemScreen = () => {
   const [material, setMaterial] = useState<string>('');
   const [purchaseDate, setPurchaseDate] = useState<string>('');
   const [price, setPrice] = useState<string>('');
-  const [imageUri, setImageUri] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [image, setImage] = useState<ImageFile>()
   const [wardrobe, setWardrobe] = useState<string>(wardrobeId)
 
   useEffect(() => {
@@ -42,8 +43,12 @@ const AddItemScreen = () => {
     fetchCategories()
   }, [])
 
-  // Function to handle adding an item (no backend logic yet)
   const handleAddItem = async () => {
+
+    if(image){
+      await addImageToStorage(image)
+    }
+
     const newItem: Item = {
       name: itemName,
       category: category,
@@ -54,13 +59,13 @@ const AddItemScreen = () => {
       material: material,
       purchaseDate: purchaseDate,
       price: parseFloat(price) || 0,
-      image: imageUri || undefined,
+      image: imageUrl || '',
       wardrobeId: wardrobe,
       userId: getAuth().currentUser?.uid,
     };
-    console.log('New Item Data:', newItem);
-    // Here you would typically call a function to save to Firestore
-    // For example: saveItemToFirestore(newItem);
+
+    console.log(newItem)
+
     try{
       await addDoc(collection(db, 'items'), {
         ...newItem,
@@ -72,7 +77,6 @@ const AddItemScreen = () => {
       console.error(error)
     }
 
-    // Optionally, clear the form after submission
     setItemName('');
     setCategory('');
     setDescription('');
@@ -82,7 +86,8 @@ const AddItemScreen = () => {
     setMaterial('');
     setPurchaseDate('');
     setPrice('');
-    setImageUri(null);
+    setImage(undefined);
+    setImageUrl('');
   };
 
   /* IMAGE SELECTION LOGIC */
@@ -121,10 +126,35 @@ const AddItemScreen = () => {
     if (!result.canceled) {
       const uri = result.assets?.[0]?.uri;
       if (uri) {
-        setImageUri(uri);
+        const base64 = await FileSystem.readAsStringAsync(uri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+
+        const imageFile = {
+          uri,
+          name: 'upload.jpg',
+          type: 'image/jpeg',
+          base64,
+        };
+
+        setImage(imageFile);
       }
     }
   };
+
+  const addImageToStorage = async (imageFile : ImageFile) => {
+    const formData = new FormData();
+    formData.append('image', imageFile.base64);
+
+    const response = await fetch('https://api.imgbb.com/1/upload?key=ade70e133043cd3ca3cfc2f0e53a83fc', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await response.json();
+    setImageUrl(data.data.display_url)
+    console.log(imageUrl);
+  }
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
@@ -132,9 +162,9 @@ const AddItemScreen = () => {
         <Text className='text-3xl font-bold mb-6 text-center text-gray-800'>Add New Item</Text>
 
         <View className='mb-6 items-center'>
-          {imageUri ? (
+          {image ? (
             <Image
-                source={typeof imageUri === 'string' ? { uri: imageUri } : require('../../assets/404.png')}
+                source={typeof image?.uri === 'string' ? { uri: image?.uri } : require('../../assets/404.png')}
                 className='w-48 h-48 rounded-lg mb-4'
                 resizeMode='cover'
             />

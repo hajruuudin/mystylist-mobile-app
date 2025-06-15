@@ -15,7 +15,6 @@ const ItemsScreen = () => {
   const [selectedWardrobe, setSelectedWardrobe] = useState<Wardrobe>();
   const navigation = useNavigation<StackNavigationProp<HomeStackParamList>>();
 
-  // 1. Fetch wardrobes only once
   useFocusEffect(
     useCallback(() => {
       const fetchUserWardrobes = async () => {
@@ -42,7 +41,6 @@ const ItemsScreen = () => {
 
       fetchUserWardrobes();
 
-      // no cleanup needed
     }, [])
   );
 
@@ -83,32 +81,18 @@ const ItemsScreen = () => {
   return (
     <SafeAreaView className='flex-1 bg-gray-100'>
       <View className='p-4'>
-        {/* Screen Title */}
 
-        {/* Header Section: Wardrobe Selector and Add New Item Button */}
-        <View className='flex-row justify-between items-center mb-4'>
-          {/* Wardrobe Selector (Placeholder for a Picker/Dropdown) */}
-          <View className='flex-row items-center'>
-            {/* This would typically be a Picker/Dropdown component */}
-            <TouchableOpacity className='border border-gray-300 rounded-md px-6 py-2 bg-gray-50'>
-              <Text className='text-gray-800'>{selectedWardrobe?.name}</Text>
-            </TouchableOpacity>
-            {/* You would implement a modal or a proper picker here to change selectedWardrobe */}
-          </View>
-
-          {/* Add New Item Button */}
+        <View className='flex-row justify-center items-center mb-4'>
           <TouchableOpacity
             className='bg-cyan-500 px-6 py-2 rounded-xl'
-            onPress={() => navigation.navigate('ItemAdd', {wardrobeId: selectedWardrobe!.id})} // Placeholder for navigation
+            onPress={() => navigation.navigate('ItemAdd', {wardrobeId: selectedWardrobe!.id})}
           >
             <Text className='text-white text-base font-bold'>Add new Item</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Divider Line */}
         <View className='border-b border-gray-300 mb-4'></View>
 
-        {/* Vertical Scroll Container for Items */}
         <FlatList
           data={items}
           renderItem={({ item: item }) =>  
@@ -120,9 +104,9 @@ const ItemsScreen = () => {
             </TouchableOpacity>
             }
           keyExtractor={(item) => item.id!}
-          numColumns={2} // Display two items per row
-          contentContainerStyle={{ paddingBottom: 20 }} // Add some padding at the bottom
-          columnWrapperStyle={{ justifyContent: 'space-between' }} // Distribute items evenly
+          numColumns={2}
+          contentContainerStyle={{ paddingBottom: 20 }}
+          columnWrapperStyle={{ justifyContent: 'space-between' }}
         />
       </View>
     </SafeAreaView>

@@ -1,17 +1,19 @@
  import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, Dimensions, StatusBar } from 'react-native';
+import { View, Text, Image, ScrollView, Dimensions, StatusBar, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { HomeStackParamList, Item } from 'types/types';
-import { RouteProp, useRoute } from '@react-navigation/native';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { collection, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
 import { db } from 'firebaseConfig';
 import { getAuth } from 'firebase/auth';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 const { height: screenHeight } = Dimensions.get('window');
 const FALLBACK_IMAGE = require('../../assets/404.png');
 
 const ItemOverviewScreen = ({}) => { 
   const route = useRoute<RouteProp<HomeStackParamList, 'ItemOverview'>>();
+  const navigation = useNavigation<StackNavigationProp<HomeStackParamList>>()
   const { itemId } = route.params;
 
   const [item, setItem] = useState<Item>()
@@ -51,6 +53,37 @@ const ItemOverviewScreen = ({}) => {
 
     fetchItem()
   }, [])
+
+  const deleteItem = async (itemId: string) => {
+    Alert.alert(
+    'Delete item',
+    'Are you sure you want to delete this item from your wardrobe?',
+    [
+      {
+        text: 'Cancel',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        onPress: async () => {
+          try {
+            await deleteDoc(doc(db, 'items', itemId));
+            Alert.alert('Item Delete Sucessfully');
+            navigation.navigate('Item')
+          } catch (error) {
+            console.error(error)
+          }
+        }
+      }
+    ],
+    {
+      cancelable: true,
+      onDismiss: () => {}
+    },
+  );
+
+  }
 
   if (!item) {
     return (
@@ -125,6 +158,13 @@ const ItemOverviewScreen = ({}) => {
               <Text className='text-base text-gray-800'>${item.price.toFixed(2)}</Text>
             </View>
           ) : null}
+
+          <TouchableOpacity
+            onPress={() => deleteItem(item.id!)}
+            className='bg-red-400 self-end px-6 rounded-xl py-2 my-2'
+          >
+            <Text className='text-white font-bold'>Delete Item</Text>
+          </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
     </View>

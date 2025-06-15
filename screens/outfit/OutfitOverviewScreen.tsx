@@ -1,28 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, Dimensions, StatusBar } from 'react-native';
+import { View, Text, Image, ScrollView, Dimensions, StatusBar, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { HomeStackParamList, Outfit } from 'types/types';
-import { RouteProp, useRoute } from '@react-navigation/native';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { collection, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
 import { db } from 'firebaseConfig';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 const { height: screenHeight } = Dimensions.get('window');
 const FALLBACK_IMAGE = require('../../assets/404.png');
 
-const OutfitOverviewScreen = ({}) => {
+const OutfitOverviewScreen = ({ }) => {
+  const navigation = useNavigation<StackNavigationProp<HomeStackParamList>>()
   const route = useRoute<RouteProp<HomeStackParamList, 'OutfitOverview'>>();
   const { outfitId } = route.params;
 
   const [outfit, setOutfit] = useState<Outfit>()
 
-   useEffect(() => {
-    async function fetchOutfit(){
-      try{
+  useEffect(() => {
+    async function fetchOutfit() {
+      try {
         const collectionRef = collection(db, 'outfits')
         const q = query(collectionRef, where('__name__', '==', outfitId))
 
         const snapshot = await getDocs(q);
-        const outfitSnaphot : Outfit[] = snapshot.docs.map(doc => {
+        const outfitSnaphot: Outfit[] = snapshot.docs.map(doc => {
           const data = doc.data()
 
           return {
@@ -37,15 +39,43 @@ const OutfitOverviewScreen = ({}) => {
             userId: data.userId
           }
         })
-      
+
         setOutfit(outfitSnaphot[0])
-      } catch (error){
+      } catch (error) {
         console.error(error)
       }
     }
 
     fetchOutfit()
   }, [])
+
+  const deleteOutfit = async (outfitId: string) => {
+    Alert.alert(
+      'Delete Outfit',
+      'Are you sure you want to delete this outfit?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {},
+          style: 'cancel'
+        },
+        {
+          text: 'Delete',
+          onPress: async () => {
+            await deleteDoc(doc(db, 'outfits', outfitId));
+            Alert.alert('Outfit Deleted', "Outfit sucessfully deleted", [], {
+              cancelable: true,
+              onDismiss: () => {navigation.navigate('Outfit')}
+            })
+          }
+        }
+      ],
+      {
+        cancelable: true,
+        onDismiss: () => {}
+      }
+    )
+  }
 
   if (!outfit) {
     return (
@@ -61,7 +91,7 @@ const OutfitOverviewScreen = ({}) => {
 
       <View style={{ height: screenHeight * 0.5 }}>
         <Image
-          source={outfit.image ? {uri: outfit.image} : FALLBACK_IMAGE}
+          source={outfit.image ? { uri: outfit.image } : FALLBACK_IMAGE}
           className="w-full h-full"
           resizeMode="cover"
         />
@@ -102,10 +132,12 @@ const OutfitOverviewScreen = ({}) => {
             )}
           </View>
 
-          <View className="flex-row items-center mb-2">
-            <Text className="text-base font-semibold text-gray-700 mr-2">Created On:</Text>
-            <Text className="text-base text-gray-800">{outfit.createdAt || '—'}</Text>
-          </View>
+          <TouchableOpacity
+            onPress={() => deleteOutfit(outfit.id!)}
+            className='bg-red-400 self-end px-6 rounded-xl py-2 my-2'
+          >
+            <Text className='text-white font-bold'>Delete Outfit</Text>
+          </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
     </View>

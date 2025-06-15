@@ -63,6 +63,7 @@ export interface Outfit {
 }
 
 export interface User {
+  id: string,
   firstName: string;
   lastName: string;
   username: string;
@@ -86,4 +87,11 @@ export interface WishlistItem {
   itemDescription?: string;
   itemPlacesToBuy?: string;
   createdAt?: Date;
+}
+
+export interface ImageFile {
+  uri: string,
+  name: string,
+  type: string,
+  base64: string
 }
