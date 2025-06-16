@@ -43,42 +43,54 @@ const OutfitsScreen = () => {
     }, [])
   );
 
-  
-
-  return (
-    <SafeAreaView className='flex-1 bg-gray-100'>
-      <View className='p-4'>
-        {/* <Text className='text-3xl font-bold mb-6 text-center text-gray-800'>Your Outfits</Text> */}
-
-        <View className='w-full flex-row justify-center items-center mb-4'>
-          <TouchableOpacity
-            className='bg-cyan-500 px-6 py-2 rounded-xl'
-            onPress={() => navigation.navigate('OutfitAdd')}
-          >
-            <Text className='text-white text-base font-bold'>Add new Outfit</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View className='border-b border-gray-300 mb-4'></View>
-
-        <FlatList
-          data={outfits}
-          renderItem={({ item: outfit }) =>
+  if (outfits.length != 0) {
+    return (
+      <SafeAreaView className='flex-1 bg-gray-100'>
+        <View className='p-4'>
+          <View className='w-full flex-row justify-center items-center mb-4'>
             <TouchableOpacity
-              className='w-1/2'
-              onPress={() => navigation.navigate('OutfitOverview', { outfitId: outfit.id! })}
+              className='bg-cyan-500 px-6 py-2 rounded-xl'
+              onPress={() => navigation.navigate('OutfitAdd')}
             >
-              <OutfitCard outfit={outfit} />
+              <Text className='text-white text-base font-bold'>Add new Outfit</Text>
             </TouchableOpacity>
-          }
-          keyExtractor={(outfit) => outfit.id!}
-          numColumns={2}
-          contentContainerStyle={{ paddingBottom: 20 }}
-          columnWrapperStyle={{ justifyContent: 'space-between' }}
-        />
-      </View>
-    </SafeAreaView>
-  );
+          </View>
+
+          <View className='border-b border-gray-300 mb-4'></View>
+
+          <FlatList
+            data={outfits}
+            renderItem={({ item: outfit }) =>
+              <TouchableOpacity
+                className='w-1/2'
+                onPress={() => navigation.navigate('OutfitOverview', { outfitId: outfit.id! })}
+              >
+                <OutfitCard outfit={outfit} />
+              </TouchableOpacity>
+            }
+            keyExtractor={(outfit) => outfit.id!}
+            numColumns={2}
+            contentContainerStyle={{ paddingBottom: 20 }}
+            columnWrapperStyle={{ justifyContent: 'space-between' }}
+          />
+        </View>
+      </SafeAreaView>
+    );
+  } else {
+    return (
+      <SafeAreaView className='flex flex-col w-full h-full justify-center items-center'>
+        <Text className='text-2xl font-bold'>No outfits in Your wardrobe! 🧍🏻</Text>
+        <Text className='text-base text-gray-600'>Once you add outfits, they will appear here</Text>
+        <TouchableOpacity
+          className='bg-cyan-500 px-6 py-2 rounded-xl my-2'
+          onPress={() => navigation.navigate('OutfitAdd')}
+        >
+          <Text className='text-white text-base font-bold'>Add new Outfit</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
+
 };
 
 export default OutfitsScreen;

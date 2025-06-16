@@ -56,7 +56,6 @@ const HomeScreen = () => {
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
   const [currentQuote, setCurrentQuote] = useState<{quote: string, person: string}>(fashionQuotes[0])
 
-  // Fetch the recent items
   useFocusEffect(
     useCallback(() => {
       const fetchRecentItems = async () => {
@@ -103,7 +102,6 @@ const HomeScreen = () => {
     }, [])
   )
 
-  // Fetch the recent outfits
   useFocusEffect(
     useCallback(() => {
       const fetchRecentOutfits = async () => {
@@ -146,7 +144,6 @@ const HomeScreen = () => {
     }, [])
   )
 
-  // Fetch 5 random things from the wishlist
   useFocusEffect(
     useCallback(() => {
       async function fetchWishlistItems() {
@@ -180,7 +177,6 @@ const HomeScreen = () => {
     }, [])
   )
 
-  // Get a random quote from the array
   useEffect(() => {
     function getRandomQuote(){
       setCurrentQuote(fashionQuotes[Math.floor(Math.random() * fashionQuotes.length)])
@@ -192,19 +188,18 @@ const HomeScreen = () => {
   return (
     <SafeAreaView className='bg-white flex flex-col justify-start h-full w-full'>
       <ScrollView className='w-full h-full p-4'>
-        {/* Style Quote Section */}
-        <Text className='text-2xl font-bold mb-2'>Style quote</Text>
-        <Text className='text-gray-600 mb-4'>Today's quote on styling</Text>
+        <Text className='text-2xl text-center font-bold mb-2'>Welcome back!</Text>
+        <Text className='text-gray-600 text-center mb-4'>Today's quote on styling</Text>
         <View className='h-32 bg-gray-100 rounded-lg mb-8 items-center justify-center'>
           <Text className='text-black text-xl mb-2 text-center italic'>{currentQuote.quote}</Text>
           <Text className='text-gray-500'>{currentQuote.person}</Text>
         </View>
 
-        {/* My Wardrobe Section */}
         <Text className='text-2xl font-bold mb-2'>My Wardrobe</Text>
         <Text className='text-gray-600'>Your recently added items to the wardrobe</Text>
-        <View className='h-auto mb-8 rounded-xl bg-gray-100 p-2 mt-2'>
-          <FlatList
+        <View className='min-h-32 mb-8 rounded-xl bg-gray-100 p-2 mt-2'>
+          { recentItems.length != 0 ? (
+            <FlatList
             data={recentItems}
             keyExtractor={(item) => item.id!}
             horizontal
@@ -214,42 +209,56 @@ const HomeScreen = () => {
               <ItemCard item={item} variant='home' />
             )}
           />
+          ) : (
+            <View className='w-full flex-1 justify-center items-center'>
+              <Text className='text-xl font-bold text-gray-600'>No Items In Your Wardrobe!</Text>
+            </View>
+          )}
         </View>
 
-        {/* My Outfits Section */}
         <Text className='text-2xl font-bold mb-2'>My Outfits</Text>
         <Text className='text-gray-600'>Your recently added outfits</Text>
-        <View className='h-auto mb-8 rounded-xl bg-gray-100 p-2 mt-2'>
-          <FlatList
-            data={recentOutfits}
-            keyExtractor={(item) => item.id!}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 0 }}
-            renderItem={({ item }) => (
-              <OutfitCard outfit={item} variant='home' />
-            )}
-          />
+        <View className='min-h-32 mb-8 rounded-xl bg-gray-100 p-2 mt-2'>
+          {recentOutfits.length != 0 ? (
+            <FlatList
+              data={recentOutfits}
+              keyExtractor={(item) => item.id!}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 0 }}
+              renderItem={({ item }) => (
+                <OutfitCard outfit={item} variant='home' />
+              )}
+            />
+          ) : (
+            <View className='w-full flex-1 justify-center items-center'>
+              <Text className='text-xl font-bold text-gray-600'>No Outfits In Your Wardrobe!</Text>
+            </View>
+          )}
+          
         </View>
 
-        {/* Wishlist Section */}
         <Text className='text-2xl font-bold mb-2'>Wishlist</Text>
         <Text className='text-gray-600 mb-4'>Keep an eye out for these items</Text>
-        <View className='h-36 bg-gray-100 rounded-lg mb-8 p-2 items-center justify-center'>
-          <FlatList
-            data={wishlistItems}
-            keyExtractor={(item) => item.id!}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 0 }}
-            renderItem={({ item }) => (
-              <WishlistCardSmall wishlistItem={item}/>
-            )}
-          />
+        <View className='min-h-32 bg-gray-100 rounded-lg mb-8 p-2 items-center justify-center'>
+          {wishlistItems.length != 0 ? (
+            <FlatList
+              data={wishlistItems}
+              keyExtractor={(item) => item.id!}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 0 }}
+              renderItem={({ item }) => (
+                <WishlistCardSmall wishlistItem={item}/>
+              )}
+            />
+          ) : (
+            <View className='w-full flex-1 justify-center items-center'>
+              <Text className='text-xl font-bold text-gray-600'>No Items In Your Wishlist!</Text>
+            </View>
+          )}
+          
         </View>
-
-        
-
       </ScrollView>
     </SafeAreaView>
   )

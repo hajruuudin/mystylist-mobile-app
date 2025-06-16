@@ -1,6 +1,7 @@
 import { deleteDoc, doc } from 'firebase/firestore'
 import { db } from 'firebaseConfig'
 import { View, Text, TouchableOpacity, Alert } from 'react-native'
+import Toast from 'react-native-toast-message'
 import { WishlistItem } from 'types/types'
 
 interface WishlistCardProps {
@@ -12,7 +13,12 @@ const WishlistItemCard = ({wishlistItem} : WishlistCardProps) => {
     const removeWishlistitem = async (id?: string) => {
         try{
             await deleteDoc(doc(db, 'wishlist-items', id!))
-            Alert.alert('Item Deleted', 'Item sucessfully removed from wishlist')
+            
+            Toast.show({
+                type: 'success',
+                text1: 'Wishlist Item Deleted!',
+                text2: 'Your item was successfully delete'
+            });
         } catch (error) {
             console.error(error)
         }

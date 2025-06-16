@@ -61,7 +61,6 @@ const ProfileScreen = () => {
             </Text>
           </View>
 
-          {/* Stats Placeholder */}
           <View className="bg-gray-200 h-40 rounded-xl items-center justify-center">
             <Text className="text-gray-500">User Stats Overview (Coming Soon)</Text>
           </View>
@@ -71,7 +70,9 @@ const ProfileScreen = () => {
   } else {
     return(
       <SafeAreaView className="flex-1 bg-white">
-        <View className='w-full h-full flex flex-col justify-center items-center'>No User Logged In</View>
+        <View className='w-full h-full flex flex-col justify-center items-center'>
+          <Text className='text-base'>No User Logged In</Text>
+        </View>
       </SafeAreaView>
     )
   }
