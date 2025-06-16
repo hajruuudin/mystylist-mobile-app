@@ -12,6 +12,7 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { getAuth } from 'firebase/auth';
 import { StackNavigationProp } from '@react-navigation/stack';
 import Spinner from 'react-native-loading-spinner-overlay';
+import Toast from 'react-native-toast-message';
 
 const AddItemScreen = () => {
   const route = useRoute<RouteProp<HomeStackParamList, 'ItemAdd'>>();
@@ -76,10 +77,19 @@ const AddItemScreen = () => {
         createdAt: Timestamp.now()
       });
       setLoading(false);
-      Alert.alert('Success', 'Item added to your wardrobe!');
+      Toast.show({
+        type: 'success',
+        text1: 'Item Added!',
+        text2: 'Item added to wardrobe!'
+      })
       navigation.navigate('Item');
     } catch (error) {
       console.error(error);
+      Toast.show({
+        type: 'error',
+        text1: 'Oops, something wrong!',
+        text2: 'There was an error while adding the item!'
+      })
     }
 
     // Reset form

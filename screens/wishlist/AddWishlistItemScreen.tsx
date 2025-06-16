@@ -9,12 +9,15 @@ import { HomeStackParamList, WishlistItem } from 'types/types'
 import { getAuth } from 'firebase/auth'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
+import Spinner from 'react-native-loading-spinner-overlay'
+import Toast from 'react-native-toast-message'
 
 const AddWishlistItemScreen = () => {
     const navigation = useNavigation<StackNavigationProp<HomeStackParamList>>()
 
     const [selectCategories, setSelectCategories] = useState<string[]>([]);
     const [pickerVisible, setPickerVisible] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false)
 
     useEffect(() => {
         async function fetchCategories() {
@@ -32,7 +35,7 @@ const AddWishlistItemScreen = () => {
     const [itemPlacesToBuy, setItemPlacesToBuy] = useState<string>('');
 
     const addItemHandler = async () => {
-        if(itemTitle == '' || itemCategory == '' || itemDescription == '' || itemPlacesToBuy == ''){
+        if (itemTitle == '' || itemCategory == '' || itemDescription == '' || itemPlacesToBuy == '') {
             Alert.alert('Hold on', 'Please fill in all the form details!')
             return
         }
@@ -45,15 +48,26 @@ const AddWishlistItemScreen = () => {
             itemPlacesToBuy: itemPlacesToBuy,
         }
 
-        try{
+        try {
+            setLoading(true);
             await addDoc(collection(db, 'wishlist-items'), {
                 ...newWishlistItem,
                 createdAt: Timestamp.now()
             })
-            Alert.alert('Success', 'Item added to your wishlist!');
+            setLoading(false);
+            Toast.show({
+                type: 'success',
+                text1: 'Wishlist Item Added!',
+                text2: 'Item added to wishlist!'
+            })
             navigation.navigate('Wishlists')
         } catch (error) {
             console.error(error)
+            Toast.show({
+                type: 'error',
+                text1: 'Oops, something went wrong!',
+                text2: 'There was an error while adding the wishlist item!'
+            })
         }
 
         setItemTitle('')
@@ -66,8 +80,13 @@ const AddWishlistItemScreen = () => {
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={{ flex: 1 }}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0} 
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
         >
+            <Spinner
+                visible={loading}
+                textContent={'Loading...'}
+                textStyle={{ color: '#FFF' }}
+            />
             <SafeAreaView className='w-full h-full bg-white'>
                 <ScrollView className='bg-white p-4'>
                     <Text className='text-center text-3xl font-bold'>Add Item to Wishlist</Text>
@@ -81,20 +100,20 @@ const AddWishlistItemScreen = () => {
                     />
 
                     <Text className='text-lg font-semibold text-gray-700 mb-2'>Category</Text>
-                            <TouchableOpacity
-                            className='border border-gray-300 rounded-md px-4 py-3 mb-4 bg-gray-50'
-                            onPress={() => setPickerVisible(true)}
-                            >
-                            <Text className='text-gray-800'>{itemCategory || 'Select a category'}</Text>
-                            </TouchableOpacity>
-                            <ItemCategoryPicker
-                            visible={pickerVisible}
-                            onClose={() => setPickerVisible(false)}
-                            categories={selectCategories}
-                            selected={itemCategory}
-                            onSelect={setItemCategory}
-                            />
-                    
+                    <TouchableOpacity
+                        className='border border-gray-300 rounded-md px-4 py-3 mb-4 bg-gray-50'
+                        onPress={() => setPickerVisible(true)}
+                    >
+                        <Text className='text-gray-800'>{itemCategory || 'Select a category'}</Text>
+                    </TouchableOpacity>
+                    <ItemCategoryPicker
+                        visible={pickerVisible}
+                        onClose={() => setPickerVisible(false)}
+                        categories={selectCategories}
+                        selected={itemCategory}
+                        onSelect={setItemCategory}
+                    />
+
                     <Text className='text-lg font-semibold text-gray-700 mb-2'>Item Description</Text>
                     <TextInput
                         className='border border-gray-300 h-24 rounded-md px-4 py-3 mb-4 text-gray-800'

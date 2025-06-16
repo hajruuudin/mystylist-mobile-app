@@ -80,20 +80,8 @@ const ItemsScreen = () => {
 
   if (items.length != 0) {
     return (
-      <SafeAreaView className='flex-1 bg-gray-100'>
-        <View className='p-4'>
-
-          <View className='flex-row justify-center items-center mb-4'>
-            <TouchableOpacity
-              className='bg-cyan-500 px-6 py-2 rounded-xl'
-              onPress={() => navigation.navigate('ItemAdd', { wardrobeId: selectedWardrobe!.id })}
-            >
-              <Text className='text-white text-base font-bold'>Add new Item</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View className='border-b border-gray-300 mb-4'></View>
-
+      <SafeAreaView className='flex-1 h-full bg-gray-100'>
+        <View className='h-full px-4'>
           <FlatList
             data={items}
             renderItem={({ item: item }) =>
@@ -109,6 +97,17 @@ const ItemsScreen = () => {
             contentContainerStyle={{ paddingBottom: 20 }}
             columnWrapperStyle={{ justifyContent: 'space-between' }}
           />
+
+          <View className='border-b border-gray-300 mb-4'></View>
+
+          <View className='flex-row justify-center items-center mb-4'>
+            <TouchableOpacity
+              className='bg-cyan-500 px-6 py-2 rounded-xl'
+              onPress={() => navigation.navigate('ItemAdd', { wardrobeId: selectedWardrobe!.id })}
+            >
+              <Text className='text-white text-base font-bold'>Add new Item</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </SafeAreaView>
     );

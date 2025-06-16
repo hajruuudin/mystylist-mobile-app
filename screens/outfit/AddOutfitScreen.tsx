@@ -10,6 +10,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { HomeStackParamList, ImageFile, Outfit } from 'types/types';
 import { OutfitCategoryPicker } from 'components/OutfitCategoryPicker';
 import { getAuth } from 'firebase/auth';
+import Spinner from 'react-native-loading-spinner-overlay';
+import Toast from 'react-native-toast-message';
 
 const AddOutfitScreen = () => {
   const route = useRoute<RouteProp<HomeStackParamList, 'OutfitAdd'>>();
@@ -19,6 +21,7 @@ const AddOutfitScreen = () => {
   const [selectSeasons, setSelectSeasons] = useState<string[]>([])
   const [pickerOcassionsVisible, setPickerOcassionsVisible] = useState<boolean>(false)
   const [pickerSeasonsVisible, setPickerSeasonsVisible] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
 
   const [outfitName, setOutfitName] = useState<string>('');
   const [category, setCategory] = useState<string>('');
@@ -46,6 +49,7 @@ const AddOutfitScreen = () => {
 
   const handleAddOutfit = async () => {
     let uploadedImageUrl = '';
+    setLoading(true)
 
     if (image) {
       uploadedImageUrl = await addImageToStorage(image) || '';
@@ -67,10 +71,20 @@ const AddOutfitScreen = () => {
         ...newOutfit,
         createdAt: Timestamp.now()
       })
-      Alert.alert('Success', 'Outfit added to your wardrobe!');
+      setLoading(false)
+      Toast.show({
+        type: 'success',
+        text1: 'Outfit Added!',
+        text2: 'Outfit added to wardrobe!'
+      })
       navigation.navigate('Outfit')
     } catch (error) {
       console.error(error)
+      Toast.show({
+        type: 'error',
+        text1: 'Oops, something wrong!',
+        text2: 'There was an error while adding the outfit!'
+      })
     }
 
     setOutfitName('');
@@ -161,6 +175,11 @@ const AddOutfitScreen = () => {
       style={{ flex: 1 }}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
     >
+      <Spinner
+        visible={loading}
+        textContent={'Loading...'}
+        textStyle={{ color: '#FFF' }}
+      />
       <SafeAreaView className='flex-1 bg-white'>
         <ScrollView className='p-4'>
           <Text className='text-3xl font-bold mb-6 text-center text-gray-800'>Add New Outfit</Text>
