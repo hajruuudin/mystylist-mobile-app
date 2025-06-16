@@ -21,6 +21,7 @@ import AddOutfitScreen from 'screens/outfit/AddOutfitScreen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import WishlistScreen from 'screens/wishlist/WishlistScreen';
 import AddWishlistItemScreen from 'screens/wishlist/AddWishlistItemScreen';
+import Toast from 'react-native-toast-message';
 
 const ItemStack = createStackNavigator();
 const OutfitStack = createStackNavigator();
@@ -119,6 +120,7 @@ export default function App() {
       <NavigationContainer>
         { user ? <MainTabNavigator /> : <AuthenticationStackNavigator /> }
       </NavigationContainer>
+      <Toast/>
     </GestureHandlerRootView>
   );
 }

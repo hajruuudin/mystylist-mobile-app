@@ -45,9 +45,10 @@ const WishlistScreen = () => {
     if(wishlistItems.length == 0){
         return(
             <View className='w-full h-full flex flex-col justify-center items-center p-2'>
-                <Text className='font-semibold mb-4 text-2xl'>No items in your wishlist found!</Text>
+                <Text className='font-semibold text-2xl'>No items in your wishlist found! 📋</Text>
+                <Text className='mb-4 text-gray-500 text-base'>Add items to not forget what you want!</Text>
                 <TouchableOpacity
-                    className='bg-cyan-400 px-4 py-2 rounded-xl'
+                    className='bg-cyan-500 px-4 py-2 rounded-xl'
                     onPress={() => navigator.navigate('WishlistAdd')}
                 >
                     <Text className='font-bold text-base text-white'>Add Item To Wishlist</Text>
@@ -66,8 +67,8 @@ const WishlistScreen = () => {
                         wishlistItem={item}
                     >
                     </WishlistItemCard>}
-                keyExtractor={(item) => item.id!} // Display two items per row
-                contentContainerStyle={{ paddingBottom: 20 }} // Add some padding at the bottom
+                keyExtractor={(item) => item.id!}
+                contentContainerStyle={{ paddingBottom: 20 }}
             >
 
             </FlatList>

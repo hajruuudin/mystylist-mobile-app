@@ -69,8 +69,10 @@ const ItemOverviewScreen = ({}) => {
         onPress: async () => {
           try {
             await deleteDoc(doc(db, 'items', itemId));
-            Alert.alert('Item Delete Sucessfully');
-            navigation.navigate('Item')
+            Alert.alert('Item Delete Sucessfully', '', [], {
+              cancelable: true,
+              onDismiss: () => navigation.navigate('Item')
+            });
           } catch (error) {
             console.error(error)
           }

@@ -31,11 +31,9 @@ const RegisterScreen = () => {
     }
 
     try {
-      // Use createUserWithEmailAndPassword from firebase/auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const { uid } = userCredential.user;
 
-      // Create a user object inside the user firestore alogn with the authentication part
       await setDoc(doc(db, 'users', uid), {
         firstName: firstName,
         lastName: lastName,
@@ -44,7 +42,6 @@ const RegisterScreen = () => {
         createdAt: serverTimestamp(),
       });
 
-      // Create an initial wardrobe for the user, potentially make it possible to have multiple wardrobes later:
       await setDoc(doc(db, 'wardrobes', uid), {
         userID: uid,
         name: 'My Wardrobe',
@@ -93,7 +90,7 @@ const RegisterScreen = () => {
         placeholder="Username"
         value={username}
         onChangeText={setUsername}
-        autoCapitalize="none" // Ensure email is not auto-capitalized
+        autoCapitalize="none"
         className="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 text-base"
       />
 
@@ -103,7 +100,7 @@ const RegisterScreen = () => {
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
-        keyboardType="email-address" // Hint for email keyboard
+        keyboardType="email-address"
         className="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4 text-base"
       />
 

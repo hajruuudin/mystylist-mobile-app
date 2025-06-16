@@ -1,6 +1,6 @@
 import * as FileSystem from 'expo-file-system';
 import React, { useEffect, useState } from 'react';
-import { Alert } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
@@ -11,6 +11,8 @@ import { ItemCategoryPicker } from 'components/ItemCategoryPicker';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { getAuth } from 'firebase/auth';
 import { StackNavigationProp } from '@react-navigation/stack';
+import Spinner from 'react-native-loading-spinner-overlay';
+import Toast from 'react-native-toast-message';
 
 const AddItemScreen = () => {
   const route = useRoute<RouteProp<HomeStackParamList, 'ItemAdd'>>();
@@ -19,6 +21,7 @@ const AddItemScreen = () => {
 
   const [selectCategories, setSelectCategories] = useState<string[]>([]);
   const [pickerVisible, setPickerVisible] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
 
   const [itemName, setItemName] = useState<string>('');
   const [category, setCategory] = useState<string>('');
@@ -44,9 +47,11 @@ const AddItemScreen = () => {
   }, [])
 
   const handleAddItem = async () => {
+    setLoading(true);
+    let uploadedImageUrl = '';
 
-    if(image){
-      await addImageToStorage(image)
+    if (image) {
+      uploadedImageUrl = await addImageToStorage(image) || '';
     }
 
     const newItem: Item = {
@@ -59,22 +64,32 @@ const AddItemScreen = () => {
       material: material,
       purchaseDate: purchaseDate,
       price: parseFloat(price) || 0,
-      image: imageUrl || '',
+      image: uploadedImageUrl,
       wardrobeId: wardrobe,
       userId: getAuth().currentUser?.uid,
     };
 
-    console.log(newItem)
+    console.log("New item is: ", newItem)
 
-    try{
+    try {
       await addDoc(collection(db, 'items'), {
         ...newItem,
         createdAt: Timestamp.now()
+      });
+      setLoading(false);
+      Toast.show({
+        type: 'success',
+        text1: 'Item Added!',
+        text2: 'Item added to wardrobe!'
       })
-      Alert.alert('Success', 'Item added to your wardrobe!');
-      navigation.navigate('Item')
-    } catch (error){
-      console.error(error)
+      navigation.navigate('Item');
+    } catch (error) {
+      console.error(error);
+      Toast.show({
+        type: 'error',
+        text1: 'Oops, something wrong!',
+        text2: 'There was an error while adding the item!'
+      })
     }
 
     setItemName('');
@@ -87,10 +102,10 @@ const AddItemScreen = () => {
     setPurchaseDate('');
     setPrice('');
     setImage(undefined);
-    setImageUrl('');
+    setImageUrl(null);
   };
 
-  /* IMAGE SELECTION LOGIC */
+
   const handleImageSelection = async () => {
     const options = ['Take Photo', 'Choose from Gallery', 'Cancel'];
     const response = await new Promise((resolve) => {
@@ -142,141 +157,159 @@ const AddItemScreen = () => {
     }
   };
 
-  const addImageToStorage = async (imageFile : ImageFile) => {
+  const addImageToStorage = async (imageFile: ImageFile): Promise<string | null> => {
     const formData = new FormData();
     formData.append('image', imageFile.base64);
 
-    const response = await fetch('https://api.imgbb.com/1/upload?key=ade70e133043cd3ca3cfc2f0e53a83fc', {
-      method: 'POST',
-      body: formData,
-    });
+    try {
+      const response = await fetch('https://api.imgbb.com/1/upload?key=ade70e133043cd3ca3cfc2f0e53a83fc', {
+        method: 'POST',
+        body: formData,
+      });
 
-    const data = await response.json();
-    setImageUrl(data.data.display_url)
-    console.log(imageUrl);
-  }
+      const data = await response.json();
+      const imageUrl = data.data.display_url;
+      console.log("Image uploaded:", imageUrl);
+      return imageUrl;
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      return null;
+    }
+  };
+
 
   return (
-    <SafeAreaView className='flex-1 bg-white'>
-      <ScrollView className='p-4'>
-        <Text className='text-3xl font-bold mb-6 text-center text-gray-800'>Add New Item</Text>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
+    >
+      <Spinner
+        visible={loading}
+        textContent={'Loading...'}
+        textStyle={{ color: '#FFF' }}
+      />
+      <SafeAreaView className='flex-1 bg-white'>
+        <ScrollView className='p-4'>
+          <Text className='text-3xl font-bold mb-6 text-center text-gray-800'>Add New Item</Text>
 
-        <View className='mb-6 items-center'>
-          {image ? (
-            <Image
+          <View className='mb-6 items-center'>
+            {image ? (
+              <Image
                 source={typeof image?.uri === 'string' ? { uri: image?.uri } : require('../../assets/404.png')}
                 className='w-48 h-48 rounded-lg mb-4'
                 resizeMode='cover'
-            />
+              />
             ) : (
-            <View className='w-48 h-48 bg-gray-200 rounded-lg justify-center items-center mb-4'>
+              <View className='w-48 h-48 bg-gray-200 rounded-lg justify-center items-center mb-4'>
                 <Text className='text-gray-500'>No Image Selected</Text>
-            </View>
+              </View>
             )}
+            <TouchableOpacity
+              className='bg-blue-500 px-6 py-3 rounded-lg shadow-md'
+              onPress={handleImageSelection}
+            >
+              <Text className='text-white text-base font-bold'>Select Image</Text>
+            </TouchableOpacity>
+            <Text className='text-xs text-gray-500 mt-2 text-center'>
+            </Text>
+          </View>
+
+          <Text className='text-lg font-semibold text-gray-700 mb-2'>Item Name</Text>
+          <TextInput
+            className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800'
+            placeholder='e.g., Classic White Shirt'
+            value={itemName}
+            onChangeText={setItemName}
+          />
+
+          <Text className='text-lg font-semibold text-gray-700 mb-2'>Category</Text>
           <TouchableOpacity
-            className='bg-blue-500 px-6 py-3 rounded-lg shadow-md'
-            onPress={handleImageSelection}
+            className='border border-gray-300 rounded-md px-4 py-3 mb-4 bg-gray-50'
+            onPress={() => setPickerVisible(true)}
           >
-            <Text className='text-white text-base font-bold'>Select Image</Text>
+            <Text className='text-gray-800'>{category || 'Select a category'}</Text>
           </TouchableOpacity>
-          <Text className='text-xs text-gray-500 mt-2 text-center'>
-          </Text>
-        </View>
-
-        <Text className='text-lg font-semibold text-gray-700 mb-2'>Item Name</Text>
-        <TextInput
-          className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800'
-          placeholder='e.g., Classic White Shirt'
-          value={itemName}
-          onChangeText={setItemName}
-        />
-
-        <Text className='text-lg font-semibold text-gray-700 mb-2'>Category</Text>
-        <TouchableOpacity
-          className='border border-gray-300 rounded-md px-4 py-3 mb-4 bg-gray-50'
-          onPress={() => setPickerVisible(true)}
-        >
-          <Text className='text-gray-800'>{category || 'Select a category'}</Text>
-        </TouchableOpacity>
-        <ItemCategoryPicker
-          visible={pickerVisible}
-          onClose={() => setPickerVisible(false)}
-          categories={selectCategories}
-          selected={category}
-          onSelect={setCategory}
-        />
+          <ItemCategoryPicker
+            visible={pickerVisible}
+            onClose={() => setPickerVisible(false)}
+            categories={selectCategories}
+            selected={category}
+            onSelect={setCategory}
+          />
 
 
-        <Text className='text-lg font-semibold text-gray-700 mb-2'>Description</Text>
-        <TextInput
-          className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800 h-24'
-          placeholder='e.g., Comfortable and versatile for all seasons.'
-          multiline
-          numberOfLines={4}
-          value={description}
-          onChangeText={setDescription}
-        />
+          <Text className='text-lg font-semibold text-gray-700 mb-2'>Description</Text>
+          <TextInput
+            className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800 h-24'
+            placeholder='e.g., Comfortable and versatile for all seasons.'
+            multiline
+            numberOfLines={4}
+            value={description}
+            onChangeText={setDescription}
+          />
 
-        <Text className='text-lg font-semibold text-gray-700 mb-2'>Color</Text>
-        <TextInput
-          className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800'
-          placeholder='e.g., Blue'
-          value={color}
-          onChangeText={setColor}
-        />
+          <Text className='text-lg font-semibold text-gray-700 mb-2'>Color</Text>
+          <TextInput
+            className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800'
+            placeholder='e.g., Blue'
+            value={color}
+            onChangeText={setColor}
+          />
 
-        <Text className='text-lg font-semibold text-gray-700 mb-2'>Size</Text>
-        <TextInput
-          className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800'
-          placeholder='e.g., M, L, 32W'
-          value={size}
-          onChangeText={setSize}
-        />
+          <Text className='text-lg font-semibold text-gray-700 mb-2'>Size</Text>
+          <TextInput
+            className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800'
+            placeholder='e.g., M, L, 32W'
+            value={size}
+            onChangeText={setSize}
+          />
 
-        <Text className='text-lg font-semibold text-gray-700 mb-2'>Brand</Text>
-        <TextInput
-          className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800'
-          placeholder='e.g., Levi Strauss'
-          value={brand}
-          onChangeText={setBrand}
-        />
+          <Text className='text-lg font-semibold text-gray-700 mb-2'>Brand</Text>
+          <TextInput
+            className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800'
+            placeholder='e.g., Levi Strauss'
+            value={brand}
+            onChangeText={setBrand}
+          />
 
-        <Text className='text-lg font-semibold text-gray-700 mb-2'>Material</Text>
-        <TextInput
-          className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800'
-          placeholder='e.g., 100% Cotton'
-          value={material}
-          onChangeText={setMaterial}
-        />
+          <Text className='text-lg font-semibold text-gray-700 mb-2'>Material</Text>
+          <TextInput
+            className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800'
+            placeholder='e.g., 100% Cotton'
+            value={material}
+            onChangeText={setMaterial}
+          />
 
-        <Text className='text-lg font-semibold text-gray-700 mb-2'>Purchase Date</Text>
-        <TextInput
-          className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800'
-          placeholder='YYYY-MM-DD'
-          value={purchaseDate}
-          onChangeText={setPurchaseDate}
-          keyboardType='numeric'
-        />
+          <Text className='text-lg font-semibold text-gray-700 mb-2'>Purchase Date</Text>
+          <TextInput
+            className='border border-gray-300 rounded-md px-4 py-3 mb-4 text-gray-800'
+            placeholder='YYYY-MM-DD'
+            value={purchaseDate}
+            onChangeText={setPurchaseDate}
+            keyboardType='numeric'
+          />
 
-        <Text className='text-lg font-semibold text-gray-700 mb-2'>Price</Text>
-        <TextInput
-          className='border border-gray-300 rounded-md px-4 py-3 mb-6 text-gray-800'
-          placeholder='e.g., 49.99'
-          value={price}
-          onChangeText={setPrice}
-          keyboardType='numeric'
-        />
+          <Text className='text-lg font-semibold text-gray-700 mb-2'>Price</Text>
+          <TextInput
+            className='border border-gray-300 rounded-md px-4 py-3 mb-6 text-gray-800'
+            placeholder='e.g., 49.99'
+            value={price}
+            onChangeText={setPrice}
+            keyboardType='numeric'
+          />
 
-        <TouchableOpacity
-          className='bg-green-600 px-6 py-4 rounded-xl shadow-md items-center'
-          onPress={handleAddItem}
-        >
-          <Text className='text-white text-xl font-bold'>Add Item</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            className='bg-green-600 px-6 py-4 rounded-xl shadow-md items-center'
+            onPress={handleAddItem}
+          >
+            <Text className='text-white text-xl font-bold'>Add Item</Text>
+          </TouchableOpacity>
 
-        <View className='h-10'></View>
-      </ScrollView>
-    </SafeAreaView>
+          <View className='h-10'></View>
+        </ScrollView>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 

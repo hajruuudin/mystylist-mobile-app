@@ -1,9 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context'; // Import the new OutfitCard component
-// Assuming HomeStackParamList and useNavigation are correctly configured for your navigation setup
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack'; // Correct import for StackNavigationProp
+import { StackNavigationProp } from '@react-navigation/stack';
 import { HomeStackParamList, Outfit } from 'types/types';
 import OutfitCard from 'components/OutfitCard';
 import { collection, getDocs, query, where } from 'firebase/firestore';
@@ -43,42 +42,54 @@ const OutfitsScreen = () => {
     }, [])
   );
 
-  
+  if (outfits.length != 0) {
+    return (
+      <SafeAreaView className='flex-1 bg-gray-100'>
+        <View className='px-4 h-full'>
+          <FlatList
+            data={outfits}
+            renderItem={({ item: outfit }) =>
+              <TouchableOpacity
+                className='w-1/2'
+                onPress={() => navigation.navigate('OutfitOverview', { outfitId: outfit.id! })}
+              >
+                <OutfitCard outfit={outfit} />
+              </TouchableOpacity>
+            }
+            keyExtractor={(outfit) => outfit.id!}
+            numColumns={2}
+            contentContainerStyle={{ paddingBottom: 20 }}
+            columnWrapperStyle={{ justifyContent: 'space-between' }}
+          />
 
-  return (
-    <SafeAreaView className='flex-1 bg-gray-100'>
-      <View className='p-4'>
-        {/* <Text className='text-3xl font-bold mb-6 text-center text-gray-800'>Your Outfits</Text> */}
+          <View className='border-b border-gray-300 mb-4'></View>
 
-        <View className='w-full flex-row justify-center items-center mb-4'>
-          <TouchableOpacity
-            className='bg-cyan-500 px-6 py-2 rounded-xl'
-            onPress={() => navigation.navigate('OutfitAdd')}
-          >
-            <Text className='text-white text-base font-bold'>Add new Outfit</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View className='border-b border-gray-300 mb-4'></View>
-
-        <FlatList
-          data={outfits}
-          renderItem={({ item: outfit }) =>
+          <View className='w-full flex-row justify-center items-center mb-4'>
             <TouchableOpacity
-              className='w-1/2'
-              onPress={() => navigation.navigate('OutfitOverview', { outfitId: outfit.id! })}
+              className='bg-cyan-500 px-6 py-2 rounded-xl'
+              onPress={() => navigation.navigate('OutfitAdd')}
             >
-              <OutfitCard outfit={outfit} />
+              <Text className='text-white text-base font-bold'>Add new Outfit</Text>
             </TouchableOpacity>
-          }
-          keyExtractor={(outfit) => outfit.id!}
-          numColumns={2}
-          contentContainerStyle={{ paddingBottom: 20 }}
-          columnWrapperStyle={{ justifyContent: 'space-between' }}
-        />
-      </View>
-    </SafeAreaView>
-  );
+          </View>
+        </View>
+      </SafeAreaView>
+    );
+  } else {
+    return (
+      <SafeAreaView className='flex flex-col w-full h-full justify-center items-center'>
+        <Text className='text-2xl font-bold'>No outfits in Your wardrobe! 🧍🏻</Text>
+        <Text className='text-base text-gray-600'>Once you add outfits, they will appear here</Text>
+        <TouchableOpacity
+          className='bg-cyan-500 px-6 py-2 rounded-xl my-2'
+          onPress={() => navigation.navigate('OutfitAdd')}
+        >
+          <Text className='text-white text-base font-bold'>Add new Outfit</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
+
 };
 
 export default OutfitsScreen;
