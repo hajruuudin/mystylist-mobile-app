@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import ItemCard from '../../components/ItemCard'; // Import the new ItemCard component
+import ItemCard from '../../components/ItemCard';
 import { HomeStackParamList, Item, Wardrobe } from 'types/types';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from 'node_modules/@react-navigation/stack/lib/typescript/src/types';

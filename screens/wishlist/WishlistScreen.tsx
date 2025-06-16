@@ -67,8 +67,8 @@ const WishlistScreen = () => {
                         wishlistItem={item}
                     >
                     </WishlistItemCard>}
-                keyExtractor={(item) => item.id!} // Display two items per row
-                contentContainerStyle={{ paddingBottom: 20 }} // Add some padding at the bottom
+                keyExtractor={(item) => item.id!}
+                contentContainerStyle={{ paddingBottom: 20 }}
             >
 
             </FlatList>

@@ -1,9 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context'; // Import the new OutfitCard component
-// Assuming HomeStackParamList and useNavigation are correctly configured for your navigation setup
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack'; // Correct import for StackNavigationProp
+import { StackNavigationProp } from '@react-navigation/stack';
 import { HomeStackParamList, Outfit } from 'types/types';
 import OutfitCard from 'components/OutfitCard';
 import { collection, getDocs, query, where } from 'firebase/firestore';

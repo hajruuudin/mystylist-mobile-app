@@ -92,7 +92,6 @@ const AddItemScreen = () => {
       })
     }
 
-    // Reset form
     setItemName('');
     setCategory('');
     setDescription('');
@@ -103,11 +102,10 @@ const AddItemScreen = () => {
     setPurchaseDate('');
     setPrice('');
     setImage(undefined);
-    setImageUrl(null); // ← no longer necessary if you're not using it
+    setImageUrl(null);
   };
 
 
-  /* IMAGE SELECTION LOGIC */
   const handleImageSelection = async () => {
     const options = ['Take Photo', 'Choose from Gallery', 'Cancel'];
     const response = await new Promise((resolve) => {
