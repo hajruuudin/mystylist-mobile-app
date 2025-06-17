@@ -9,6 +9,7 @@ Mobile application which allows users to track information about their clothes a
 
 ## Running the app
 Developed using React Native & Firebase. Compiled using Expo SDK 53.
+The 'server' and 'seeds' directories are irrelevant to the project, but they mimic the structure of the firebase backend for better understanding.
 To run the application locally, environment variables need to be added to a .env to the root of the folder, as specified by the end.d.ts:
 ```js
 // env.d.ts
