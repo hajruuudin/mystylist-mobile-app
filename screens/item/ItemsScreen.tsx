@@ -98,11 +98,9 @@ const ItemsScreen = () => {
             columnWrapperStyle={{ justifyContent: 'space-between' }}
           />
 
-          <View className='border-b border-gray-300 mb-4'></View>
-
           <View className='flex-row justify-center items-center mb-4'>
             <TouchableOpacity
-              className='bg-cyan-500 px-6 py-2 rounded-xl'
+              className='bg-cyan-700 px-6 py-2 rounded-xl'
               onPress={() => navigation.navigate('ItemAdd', { wardrobeId: selectedWardrobe!.id })}
             >
               <Text className='text-white text-base font-bold'>Add new Item</Text>
@@ -117,7 +115,7 @@ const ItemsScreen = () => {
         <Text className='text-2xl font-bold'>No items in Your wardrobe! 👕</Text>
         <Text className='text-base text-gray-600'>Once you add items, they will appear here</Text>
         <TouchableOpacity
-          className='bg-cyan-500 px-6 py-2 rounded-xl my-2'
+          className='bg-cyan-700 px-6 py-2 rounded-xl my-2'
           onPress={() => navigation.navigate('ItemAdd', { wardrobeId: selectedWardrobe!.id })}
         >
           <Text className='text-white text-base font-bold'>Add new Item</Text>

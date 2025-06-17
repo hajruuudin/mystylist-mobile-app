@@ -240,7 +240,7 @@ const HomeScreen = () => {
 
         <Text className='text-2xl font-bold mb-2'>Wishlist</Text>
         <Text className='text-gray-600 mb-4'>Keep an eye out for these items</Text>
-        <View className='min-h-32 bg-gray-100 rounded-lg mb-8 p-2 items-center justify-center'>
+        <View className='min-h-32 bg-gray-100 rounded-lg mb-8 p-2 items-start justify-center'>
           {wishlistItems.length != 0 ? (
             <FlatList
               data={wishlistItems}

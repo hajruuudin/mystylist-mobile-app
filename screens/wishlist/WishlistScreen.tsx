@@ -7,6 +7,7 @@ import { db } from 'firebaseConfig'
 import { useCallback, useState } from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { HomeStackParamList, WishlistItem } from 'types/types'
 
 
@@ -59,7 +60,7 @@ const WishlistScreen = () => {
 
 
     return (
-        <View className='w-full h-full flex flex-col justify-between items-center p-2'>
+        <SafeAreaView className='w-full h-full flex flex-col justify-between items-center p-2'>
             <FlatList 
                 data={wishlistItems}
                 renderItem={({ item: item }) =>  
@@ -73,12 +74,12 @@ const WishlistScreen = () => {
 
             </FlatList>
             <TouchableOpacity
-                className='bg-cyan-400 px-4 py-2 rounded-xl'
+                className='bg-cyan-500 px-4 py-2 rounded-xl'
                 onPress={() => navigator.navigate('WishlistAdd')}
             >
                 <Text className='font-bold text-base text-white'>Add Item To Wishlist</Text>
             </TouchableOpacity>
-        </View>
+        </SafeAreaView>
     )
 }
 

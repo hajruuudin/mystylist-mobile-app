@@ -62,11 +62,9 @@ const OutfitsScreen = () => {
             columnWrapperStyle={{ justifyContent: 'space-between' }}
           />
 
-          <View className='border-b border-gray-300 mb-4'></View>
-
           <View className='w-full flex-row justify-center items-center mb-4'>
             <TouchableOpacity
-              className='bg-cyan-500 px-6 py-2 rounded-xl'
+              className='bg-orange-800 px-6 py-2 rounded-xl'
               onPress={() => navigation.navigate('OutfitAdd')}
             >
               <Text className='text-white text-base font-bold'>Add new Outfit</Text>
@@ -81,7 +79,7 @@ const OutfitsScreen = () => {
         <Text className='text-2xl font-bold'>No outfits in Your wardrobe! 🧍🏻</Text>
         <Text className='text-base text-gray-600'>Once you add outfits, they will appear here</Text>
         <TouchableOpacity
-          className='bg-cyan-500 px-6 py-2 rounded-xl my-2'
+          className='bg-orange-800 px-6 py-2 rounded-xl my-2'
           onPress={() => navigation.navigate('OutfitAdd')}
         >
           <Text className='text-white text-base font-bold'>Add new Outfit</Text>

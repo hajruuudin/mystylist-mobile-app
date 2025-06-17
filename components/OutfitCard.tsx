@@ -23,12 +23,12 @@ const OutfitCard = ({ outfit, variant = 'default' }: OutfitCardProps) => {
         className='w-full h-32 object-cover rounded-t-lg'
         resizeMode='cover'
       />
-      <View className='p-3'>
-        <Text className='text-base font-semibold text-gray-800 mb-1' numberOfLines={1}>
+      <View className='p-3 border-b-4 border-orange-800 rounded-b-lg'>
+        <Text className='text-base text-center font-semibold border-cyan-700 rounded-b-lg text-gray-800 mb-1' numberOfLines={1}>
           {outfit.name}
         </Text>
         {outfit.occasion && (
-          <Text className='text-sm text-gray-500' numberOfLines={1}>
+          <Text className='text-sm text-center font-semibold text-white bg-orange-800 rounded-lg py-1' numberOfLines={1}>
             {outfit.occasion}
           </Text>
         )}
