@@ -13,6 +13,7 @@ import { getAuth } from 'firebase/auth';
 import { StackNavigationProp } from '@react-navigation/stack';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Toast from 'react-native-toast-message';
+import { IMG_BB_SECRET } from '@env';
 
 const AddItemScreen = () => {
   const route = useRoute<RouteProp<HomeStackParamList, 'ItemAdd'>>();
@@ -162,7 +163,7 @@ const AddItemScreen = () => {
     formData.append('image', imageFile.base64);
 
     try {
-      const response = await fetch('https://api.imgbb.com/1/upload?key=ade70e133043cd3ca3cfc2f0e53a83fc', {
+      const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMG_BB_SECRET}`, {
         method: 'POST',
         body: formData,
       });
