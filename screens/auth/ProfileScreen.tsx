@@ -224,10 +224,10 @@ const ProfileScreen = () => {
             <Text className='text-4xl font-bold mb-2'>{outfitCount}</Text>
 
             <Text className='text-xl text-gray-600 mt-2 font-bold'>Most present item</Text>
-            <Text className='text-4xl font-bold mb-2'>{mostPresentCategoy}</Text>
+            <Text className='text-4xl font-bold mb-2'>{mostPresentCategoy || 'None'}</Text>
 
             <Text className='text-xl text-gray-600 mt-2 font-bold'>Most present outfit ocassion</Text>
-            <Text className='text-4xl font-bold mb-2'>{mostPresentOcassion}</Text>
+            <Text className='text-4xl font-bold mb-2'>{mostPresentOcassion || 'None'}</Text>
           </View>
 
           <TouchableOpacity

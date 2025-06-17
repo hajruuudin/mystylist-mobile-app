@@ -8,12 +8,12 @@ interface WishlistCardProps {
     wishlistItem: WishlistItem
 }
 
-const WishlistItemCard = ({wishlistItem} : WishlistCardProps) => {
+const WishlistItemCard = ({ wishlistItem }: WishlistCardProps) => {
 
     const removeWishlistitem = async (id?: string) => {
-        try{
+        try {
             await deleteDoc(doc(db, 'wishlist-items', id!))
-            
+
             Toast.show({
                 type: 'success',
                 text1: 'Wishlist Item Deleted!',
@@ -24,8 +24,7 @@ const WishlistItemCard = ({wishlistItem} : WishlistCardProps) => {
         }
     }
 
-  return (
-    <View>
+    return (
         <View className='w-full h-auto p-4 rounded-2xl bg-white mt-2'>
             <View className='w-full h-auto flex flex-row justify-between items-center'>
                 <Text className='text-2xl font-bold'>{wishlistItem.itemTitle}</Text>
@@ -39,17 +38,14 @@ const WishlistItemCard = ({wishlistItem} : WishlistCardProps) => {
 
             <Text className='text-start font-semibold mt-2'>Places to buy</Text>
             <Text>{wishlistItem.itemPlacesToBuy}</Text>
+            <TouchableOpacity
+                className='self-end bg-red-500 px-4 py-2 rounded-xl mt-2'
+                onPress={() => removeWishlistitem(wishlistItem.id)}
+            >
+                <Text className='text-white font-semibold'>Remove item</Text>
+            </TouchableOpacity>
         </View>
-        <TouchableOpacity
-            className='self-end bg-red-300 px-4 py-2 rounded-xl mt-2'
-            onPress={() => removeWishlistitem(wishlistItem.id)}
-        >
-            <Text className='text-white font-semibold'>Remove item</Text>
-        </TouchableOpacity>
-    </View>
-    
-    
-  )
+    )
 }
 
 export default WishlistItemCard
